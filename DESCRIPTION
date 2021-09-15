@@ -1,0 +1,26 @@
+Package: FuzzyNaiveBayes
+Title: Fuzzy Classifiers
+Version: 0.1.0
+Authors@R:
+    c(person("Jodavid", "Ferreira", email = "jodavid@protonmail.com",role = c("aut","cre"), comment = c(ORCID = "0000-0002-2131-6464")),
+      person("Ronei", "Moraes", email = "ronei@de.ufpb.br",role = c("ctb")))
+Description: Fuzzy Classifiers for data.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Imports: 
+    caTools,
+    datasets,
+    doSNOW,
+    foreach,
+    parallel,
+    Rdpack
+RdMacros:
+    Rdpack
+Depends: 
+    R (>= 2.10)
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
