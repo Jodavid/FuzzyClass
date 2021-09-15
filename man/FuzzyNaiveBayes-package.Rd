@@ -8,6 +8,14 @@
 \description{
 Fuzzy Classifiers for data.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/Jodavid/FuzzyNaiveBayes}
+  \item Report bugs at \url{https://github.com/Jodavid/FuzzyNaiveBayes/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Jodavid Ferreira \email{jodavid@protonmail.com} (\href{https://orcid.org/0000-0002-2131-6464}{ORCID})
 
