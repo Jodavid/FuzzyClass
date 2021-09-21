@@ -15,8 +15,11 @@ Imports:
     datasets,
     doSNOW,
     foreach,
+    MASS,
     parallel,
-    Rdpack
+    Rdpack,
+    rootSolve,
+    trapezoid
 RdMacros:
     Rdpack
 Depends: 
