@@ -16,23 +16,23 @@
 # -------------------
 
 # -----------------------------------------------
-#      Fuzzy Gaussian Naive Bayes Classifier
+#      Gaussian Naive Bayes Classifier
 # -----------------------------------------------
 
-#' Fuzzy Gaussian Naive Bayes Classifier
+#' Gaussian Naive Bayes Classifier
 #'
-#' \code{FuzzyGaussianNaiveBayesZadeh} Fuzzy Gaussian Naive Bayes Classifier Zadeh-based
+#' \code{GaussianNaiveBayes} Gaussian Naive Bayes Classifier Zadeh-based
 #'
 #'
 #' @param train matrix or data frame of training set cases.
 #' @param cl factor of true classifications of training set
-#' @param metd Method of transforming the triangle into scalar, It is the type of data entry for the test sample, use metd 1 if you want to use the Baricentro technique and use metd 2 if you want to use the Q technique of the uniformity test (article: Directional Statistics and Shape analysis).
 #' @param cores  how many cores of the computer do you want to use (default = 2)
+#' @param fuzzy boolean variable to use the membership function
 #'
 #' @return A vector of classifications
 #'
 #' @references
-#' \insertRef{marcos2012online}{FuzzyNaiveBayes}
+#' \insertRef{marcos2012online}{NaiveBayesClassifiers}
 #'
 #' @examples
 #'
@@ -47,12 +47,12 @@
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
 #' test = Test[,-5]
-#' fit_FGNB <- FuzzyGaussianNaiveBayesZadeh(train =  Train[,-5],
-#'                                     cl = Train[,5], metd = 1, cores = 2)
+#' fit_GNB <- GaussianNaiveBayes(train =  Train[,-5],
+#'                                     cl = Train[,5], cores = 2)
 #'
-#' pred_FGNB <- predict(fit_FGNB, test)
+#' pred_GNB <- predict(fit_GNB, test)
 #'
-#' head(pred_FGNB)
+#' head(pred_GNB)
 #' head(Test[,5])
 #'
 #' @importFrom stats cov dnorm qchisq qnorm
@@ -60,11 +60,11 @@
 #' @importFrom Rdpack reprompt
 #'
 #' @export
-FuzzyGaussianNaiveBayesZadeh <- function( train, cl, metd = 1, cores = 2)
-  UseMethod("FuzzyGaussianNaiveBayesZadeh")
+GaussianNaiveBayes <- function( train, cl, cores = 2, fuzzy = T)
+  UseMethod("GaussianNaiveBayes")
 
 #' @export
-FuzzyGaussianNaiveBayesZadeh.default <- function( train, cl, metd = 1, cores = 2){
+GaussianNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = TRUE){
 
   # --------------------------------------------------------
   # Estimating class parameters
@@ -175,28 +175,35 @@ FuzzyGaussianNaiveBayesZadeh.default <- function( train, cl, metd = 1, cores = 2
   structure(list( minimo = minimo,
                   maximo = maximo,
                   Comprim_Intervalo = Comprim_Intervalo,
+                  fuzzy = fuzzy,
                   Sturges = Sturges,
                   Pertinencias = Pertinencias,
                   log_determinante = log_determinante,
                   logaritmo = logaritmo,
                   inversa_covar = inversa_covar,
-                   medias = medias,
-                   cols = cols,
-                   M = M,
-                   metd = metd,
-                   cores = cores
+                  medias = medias,
+                  cols = cols,
+                  M = M,
+                  cores = cores
                  ),
-            class = "FuzzyGaussianNaiveBayesZadeh")
+            class = "GaussianNaiveBayes")
 
 }
 # -------------------------
 
 
 #' @export
-print.FuzzyGaussianNaiveBayesZadeh <- function(x, ...){
-  # -----------------
-  cat("\nFuzzy Gaussian Naive Bayes Classifier for Discrete Predictors Zadeh-based\n\n")
-  # -----------------
+print.GaussianNaiveBayes <- function(x, ...){
+
+  if(x$fuzzy == T){
+    # -----------------
+    cat("\nFuzzy Gaussian Naive Bayes Classifier for Discrete Predictors Zadeh-based\n\n")
+    # -----------------
+  }else{
+    # -----------------
+    cat("\nGaussian Naive Bayes Classifier for Discrete Predictors\n\n")
+    # -----------------
+  }
   cat("Variables:\n")
   print(names(x$medias[[1]]))
   cat("Class:\n")
@@ -205,7 +212,7 @@ print.FuzzyGaussianNaiveBayesZadeh <- function(x, ...){
 }
 
 #' @export
-predict.FuzzyGaussianNaiveBayesZadeh <- function(object,
+predict.GaussianNaiveBayes <- function(object,
                                             newdata,
                                             ...){
   # --------------------------------------------------------
@@ -223,13 +230,12 @@ predict.FuzzyGaussianNaiveBayesZadeh <- function(object,
   medias = object$medias
   cols = object$cols
   M = object$M
-  metd = object$metd
   cores = object$cores
+  fuzzy = object$fuzzy
   # --------------------------------------------------------
 
   # --------------------------------------------------------
   # Calculation of triangles for each test observation
-  # sum of Logs and calculation of Barycenter
   # --------------
   N_test <- nrow(test)
   # --------------
@@ -266,7 +272,15 @@ predict.FuzzyGaussianNaiveBayesZadeh <- function(object,
         log_Pertinencia = ifelse(pert <= 0, -50, log(Pertinencias[[i]][as.numeric(res)]) )
       }
 
-      f <- log_Pertinencia + logaritmo[i] - log_determinante[[i]] - 0.5*as.numeric(x - medias[[i]] )%*%inversa_covar[[i]]%*%as.numeric(x - medias[[i]] )
+      if(fuzzy == T){
+        # --------------
+        f <- log_Pertinencia + logaritmo[i] - log_determinante[[i]] - 0.5*as.numeric(x - medias[[i]] )%*%inversa_covar[[i]]%*%as.numeric(x - medias[[i]] )
+        # --------------
+      }else{
+        # --------------
+        f <- logaritmo[i] - log_determinante[[i]] - 0.5*as.numeric(x - medias[[i]] )%*%inversa_covar[[i]]%*%as.numeric(x - medias[[i]] )
+        # --------------
+      }
 
       return(f)
     })

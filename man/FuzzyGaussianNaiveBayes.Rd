@@ -44,5 +44,5 @@ head(Test[,5])
 
 }
 \references{
-\insertRef{moraes2021new}{FuzzyNaiveBayes}
+\insertRef{moraes2021new}{NaiveBayesClassifiers}
 }

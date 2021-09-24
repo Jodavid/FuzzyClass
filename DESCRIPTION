@@ -1,5 +1,5 @@
-Package: FuzzyNaiveBayes
-Title: Fuzzy Classifiers
+Package: NaiveBayesClassifiers
+Title: Fuzzy e non-fuzzy Naive Bayes Classifiers
 Version: 0.1.0
 Authors@R:
     c(person("Jodavid", "Ferreira", email = "jodavid@protonmail.com",role = c("aut","cre"), comment = c(ORCID = "0000-0002-2131-6464")),

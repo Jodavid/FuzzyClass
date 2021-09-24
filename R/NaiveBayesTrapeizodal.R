@@ -19,18 +19,19 @@
 #      Fuzzy Naive Bayes Trapeizodal Classifier
 # -----------------------------------------------
 
-#' \code{FuzzyNaiveBayesTrapeizodal} Fuzzy Naive Bayes Trapeizodal Classifier
+#' \code{NaiveBayesTrapeizodal} Naive Bayes Trapeizodal Classifier
 #'
 #'
 #' @param train matrix or data frame of training set cases.
 #' @param cl factor of true classifications of training set
 #' @param metd Method of transforming the triangle into scalar, It is the type of data entry for the test sample, use metd 1 if you want to use the Baricentro technique and use metd 2 if you want to use the Q technique of the uniformity test (article: Directional Statistics and Shape analysis).
 #' @param cores  how many cores of the computer do you want to use (default = 2)
+#' @param fuzzy boolean variable to use the membership function
 #'
 #' @return A vector of classifications
 #'
 #' @references
-#' \insertRef{moraes2021new}{FuzzyNaiveBayes}
+#' \insertRef{moraes2021new}{NaiveBayesClassifiers}
 #'
 #' @examples
 #'
@@ -45,21 +46,21 @@
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
 #' test = Test[,-5]
-#' fit_FGNB <- FuzzyNaiveBayesTrapeizodal(train =  Train[,-5],
+#' fit_NBT <- NaiveBayesTrapeizodal(train =  Train[,-5],
 #'                                     cl = Train[,5], metd = 1, cores = 2)
 #'
-#' pred_FGNB <- predict(fit_FGNB, test)
+#' pred_NBT <- predict(fit_NBT, test)
 #'
-#' head(pred_FGNB)
+#' head(pred_NBT)
 #' head(Test[,5])
 #'
 #'
 #' @export
-FuzzyNaiveBayesTrapeizodal <- function( train, cl, metd = 1, cores = 2)
-  UseMethod("FuzzyNaiveBayesTrapeizodal")
+NaiveBayesTrapeizodal <- function( train, cl, metd = 1, cores = 2, fuzzy = T)
+  UseMethod("NaiveBayesTrapeizodal")
 
 #' @export
-FuzzyNaiveBayesTrapeizodal.default <- function( train, cl, metd = 1, cores = 2){
+NaiveBayesTrapeizodal.default <- function( train, cl, metd = 1, cores = 2, fuzzy = T){
 
   # --------------------------------------------------------
   # Estimating class parameters
@@ -95,26 +96,34 @@ FuzzyNaiveBayesTrapeizodal.default <- function( train, cl, metd = 1, cores = 2){
                  M = M,
                  metd = metd,
                  cores = cores,
-                 intervalos = intervalos
+                 intervalos = intervalos,
+                 fuzzy = fuzzy
                  ),
-            class = "FuzzyNaiveBayesTrapeizodal")
+            class = "NaiveBayesTrapeizodal")
 
 }
 # -------------------------
 
 
 #' @export
-print.FuzzyNaiveBayesTrapeizodal <- function(x, ...){
+print.NaiveBayesTrapeizodal <- function(x, ...){
+
+  if(x$fuzzy == T){
   # -----------------
   cat("\nFuzzy Naive Bayes Trapezoidal Classifier for Discrete Predictors\n\n")
   # -----------------
+  }else{
+    # -----------------
+    cat("\nNaive Bayes Trapezoidal Classifier for Discrete Predictors\n\n")
+    # -----------------
+  }
   cat("Class:\n")
   print(levels(x$M))
   # -----------------
 }
 
 #' @export
-predict.FuzzyNaiveBayesTrapeizodal <- function(object,
+predict.NaiveBayesTrapeizodal <- function(object,
                                             newdata,
                                             ...){
   # --------------------------------------------------------
@@ -128,6 +137,7 @@ predict.FuzzyNaiveBayesTrapeizodal <- function(object,
   metd = object$metd
   cores = object$cores
   intervalos = object$intervalos
+  fuzzy = object$fuzzy
   # --------------------------------------------------------
 
   # --------------------------------------------------------
@@ -194,16 +204,18 @@ predict.FuzzyNaiveBayesTrapeizodal <- function(object,
             # --------------
           }
 
-          # --------------
-          # Mcl(Xi)
-          for (st in 1:intervalos) {
-            if(st == intervalos){
-              if((x[j] >= pertinicesC[[i]][[j]][st,1])& (x[j] <= pertinicesC[[i]][[j]][st,2])){
-                resultadoPerClass = resultadoPerClass * pertinicesC[[i]][[j]][st,3]
-              }
-            }else{
-              if((x[j] > pertinicesC[[i]][[j]][st,1]) & (x[j] < pertinicesC[[i]][[j]][st,2])){
-                resultadoPerClass = resultadoPerClass * pertinicesC[[i]][[j]][st,3]
+          if(fuzzy == T){
+            # --------------
+            # Mcl(Xi)
+            for (st in 1:intervalos) {
+              if(st == intervalos){
+                if((x[j] >= pertinicesC[[i]][[j]][st,1])& (x[j] <= pertinicesC[[i]][[j]][st,2])){
+                  resultadoPerClass = resultadoPerClass * pertinicesC[[i]][[j]][st,3]
+                }
+              }else{
+                if((x[j] > pertinicesC[[i]][[j]][st,1]) & (x[j] < pertinicesC[[i]][[j]][st,2])){
+                  resultadoPerClass = resultadoPerClass * pertinicesC[[i]][[j]][st,3]
+                }
               }
             }
           }

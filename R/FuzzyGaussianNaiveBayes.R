@@ -31,7 +31,7 @@
 #' @return A vector of classifications
 #'
 #' @references
-#' \insertRef{moraes2021new}{FuzzyNaiveBayes}
+#' \insertRef{moraes2021new}{NaiveBayesClassifiers}
 #'
 #' @examples
 #'
