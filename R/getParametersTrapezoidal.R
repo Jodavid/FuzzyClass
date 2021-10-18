@@ -42,8 +42,8 @@ getParametersTrapezoidal <- function(sample){
   # midpoint
   pmedio  = minimum + (( maximum - minimum )/2)
   # --------
-  ss <- rootSolve::multiroot(f = model, start = c(pmedio,pmedio))
-  ss <- c(abs(ss$root[1]), abs(ss$root[2]) )
+  ss <- rootSolve::multiroot(f = model, start = c(pmedio,pmedio+.1))
+  ss <- c(ss$root[1], ss$root[2] )
   # --------
   if(ss[1] > ss[2]){
     # --------
@@ -56,6 +56,12 @@ getParametersTrapezoidal <- function(sample){
     topo2 = ss[2]
     # --------
   }
+  # -------------------------
+  # Verificando limites
+  topo1 <- ifelse(topo1 < minimum, minimum, topo1);
+  # ---
+  topo2 <- ifelse(topo2 <= topo1, topo1,
+                  ifelse(topo2 >= maximum, maximum, topo2));
   # -------------------------
   # Parameters Return
   return(c(minimum, topo1, topo2, maximum))

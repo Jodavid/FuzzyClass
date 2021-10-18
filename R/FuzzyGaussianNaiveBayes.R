@@ -144,6 +144,7 @@ print.FuzzyGaussianNaiveBayes <- function(x, ...){
 #' @export
 predict.FuzzyGaussianNaiveBayes <- function(object,
                                             newdata,
+                                            type = "class",
                                             ...){
   # --------------------------------------------------------
   #type <- match.arg("class")
@@ -167,8 +168,8 @@ predict.FuzzyGaussianNaiveBayes <- function(object,
   N_test <- nrow(test)
   # --------------
   # Defining how many CPU cores to use
-  core <- parallel::makeCluster(cores)
-  doSNOW::registerDoSNOW(core)
+  core <- parallel::makePSOCKcluster(cores)
+  doParallel::registerDoParallel(core)
   # --------------
   # loop start
   R_M_obs <- foreach::foreach(h=1:N_test,.combine = rbind) %dopar% {
@@ -224,16 +225,27 @@ predict.FuzzyGaussianNaiveBayes <- function(object,
                     # ------------
                   })
     # --------------------------------------------------------
-    R_M_class <- which.max(R_M)
-    # -------------------------
+    #R_M_class <- which.max(produto)
+    R_M_class <- R_M
+    # --------------------------------------------------------
     return(R_M_class)
   }
-
+  # ------------
   # -------------------------
   parallel::stopCluster(core)
-  # -------------------------
-  resultado <- unique(M)[R_M_obs]
   # ---------
-  return(as.factor(c(resultado)))
+  if(type == "class"){
+    # -------------------------
+    R_M_obs <- sapply(1:nrow(R_M_obs), function(i) which.max(R_M_obs[i,]) )
+    resultado <- unique(M)[R_M_obs]
+    return(as.factor(c(resultado)))
+    # -------------------------
+  }else{
+    # -------------------------
+    colnames(R_M_obs) <- unique(M)
+    return(R_M_obs)
+    # -------------------------
+  }
+
 
 }

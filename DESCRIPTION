@@ -1,5 +1,5 @@
 Package: NaiveBayesClassifiers
-Title: Fuzzy e non-fuzzy Naive Bayes Classifiers
+Title: Fuzzy e Non-Fuzzy Naive Bayes Classifiers
 Version: 0.1.0
 Authors@R:
     c(person("Jodavid", "Ferreira", email = "jodavid@protonmail.com",role = c("aut","cre"), comment = c(ORCID = "0000-0002-2131-6464")),
@@ -13,7 +13,8 @@ RoxygenNote: 7.1.2
 Imports: 
     caTools,
     datasets,
-    doSNOW,
+    doParallel,
+    EnvStats,
     foreach,
     MASS,
     parallel,
@@ -27,5 +28,5 @@ Depends:
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-URL: https://github.com/Jodavid/FuzzyNaiveBayes
-BugReports: https://github.com/Jodavid/FuzzyNaiveBayes/issues
+URL: https://github.com/Jodavid/NaiveBayesClassifiers
+BugReports: https://github.com/Jodavid/NaiveBayesClassifiers/issues

@@ -24,7 +24,6 @@
 #'
 #' @param train matrix or data frame of training set cases.
 #' @param cl factor of true classifications of training set
-#' @param metd Method of transforming the triangle into scalar, It is the type of data entry for the test sample, use metd 1 if you want to use the Baricentro technique and use metd 2 if you want to use the Q technique of the uniformity test (article: Directional Statistics and Shape analysis).
 #' @param cores  how many cores of the computer do you want to use (default = 2)
 #' @param fuzzy boolean variable to use the membership function
 #'
@@ -47,7 +46,7 @@
 #' # A vector will be interpreted as a row vector for a single case.
 #' test = Test[,-5]
 #' fit_NBT <- NaiveBayesTrapeizodal(train =  Train[,-5],
-#'                                     cl = Train[,5], metd = 1, cores = 2)
+#'                                     cl = Train[,5], cores = 2)
 #'
 #' pred_NBT <- predict(fit_NBT, test)
 #'
@@ -56,11 +55,11 @@
 #'
 #'
 #' @export
-NaiveBayesTrapeizodal <- function( train, cl, metd = 1, cores = 2, fuzzy = T)
+NaiveBayesTrapeizodal <- function( train, cl, cores = 2, fuzzy = T)
   UseMethod("NaiveBayesTrapeizodal")
 
 #' @export
-NaiveBayesTrapeizodal.default <- function( train, cl, metd = 1, cores = 2, fuzzy = T){
+NaiveBayesTrapeizodal.default <- function( train, cl, cores = 2, fuzzy = T){
 
   # --------------------------------------------------------
   # Estimating class parameters
@@ -80,7 +79,7 @@ NaiveBayesTrapeizodal.default <- function( train, cl, metd = 1, cores = 2, fuzzy
   # --------------------------------------------------------
 
   # --------------------------------------------------------
-  # LEstimating Trapezoidal Parameters
+  # Estimating Trapezoidal Parameters
   parametersC <- lapply(1:length(unique(M)), function(i){
     t(sapply(1:cols, function(j){
       SubSet <- dados[M==unique(M)[i],j]
@@ -94,7 +93,6 @@ NaiveBayesTrapeizodal.default <- function( train, cl, metd = 1, cores = 2, fuzzy
                  parametersC = parametersC,
                  cols = cols,
                  M = M,
-                 metd = metd,
                  cores = cores,
                  intervalos = intervalos,
                  fuzzy = fuzzy
@@ -125,6 +123,7 @@ print.NaiveBayesTrapeizodal <- function(x, ...){
 #' @export
 predict.NaiveBayesTrapeizodal <- function(object,
                                             newdata,
+                                          type = "class",
                                             ...){
   # --------------------------------------------------------
   #type <- match.arg("class")
@@ -134,7 +133,6 @@ predict.NaiveBayesTrapeizodal <- function(object,
   parametersC = object$parametersC
   cols = object$cols
   M = object$M
-  metd = object$metd
   cores = object$cores
   intervalos = object$intervalos
   fuzzy = object$fuzzy
@@ -146,8 +144,10 @@ predict.NaiveBayesTrapeizodal <- function(object,
   N_test <- nrow(test)
   # --------------
   # Defining how many CPU cores to use
-  core <- parallel::makeCluster(cores)
-  doSNOW::registerDoSNOW(core)
+  #core <- parallel::makeCluster(cores)
+  #doSNOW::registerDoSNOW(core)
+  core <- parallel::makePSOCKcluster(cores)
+  doParallel::registerDoParallel(core)
   # --------------
   # loop start
   R_M_obs <- foreach::foreach(h=1:N_test,.combine = rbind) %dopar% {
@@ -204,6 +204,8 @@ predict.NaiveBayesTrapeizodal <- function(object,
             # --------------
           }
 
+      # -----------------------------------------------------------------------
+      # -----------------------------------------------------------------------
           if(fuzzy == T){
             # --------------
             # Mcl(Xi)
@@ -219,6 +221,9 @@ predict.NaiveBayesTrapeizodal <- function(object,
               }
             }
           }
+    # -----------------------------------------------------------------------
+    # -----------------------------------------------------------------------
+
           # --------------
           # P(Wcl)
           resultadoPerClass = resultadoPerClass * 1/length(unique(M))
@@ -231,16 +236,27 @@ predict.NaiveBayesTrapeizodal <- function(object,
       produto <- matrix(as.numeric(res), ncol = length(unique(M)))
       produto <- apply(produto, 2, prod)
       # --------------------------------------------------------
-      R_M_class <- which.max(produto)
+      #R_M_class <- which.max(produto)
+      R_M_class <- produto
       # --------------------------------------------------------
       return(R_M_class)
   }
     # ------------
   # -------------------------
   parallel::stopCluster(core)
-  # -------------------------
-  resultado <- unique(M)[R_M_obs]
   # ---------
-  return(as.factor(c(resultado)))
+  if(type == "class"){
+    # -------------------------
+    R_M_obs <- sapply(1:nrow(R_M_obs), function(i) which.max(R_M_obs[i,]) )
+    resultado <- unique(M)[R_M_obs]
+    return(as.factor(c(resultado)))
+    # -------------------------
+  }else{
+    # -------------------------
+    colnames(R_M_obs) <- unique(M)
+    return(R_M_obs)
+    # -------------------------
+    }
+
 
 }

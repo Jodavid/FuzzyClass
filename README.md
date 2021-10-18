@@ -1,16 +1,27 @@
 
-# classificador Gaussian Naive Bayes com parâmetros Fuzzy
+# NaiveBayesClassifiers <img src="man/figures/logo.png" align="right" height="139"/>
 
-Última Atualização: 15-09-2021
+<!-- badges: start -->
 
-## Visão geral
+[![CRAN
+version](https://www.r-pkg.org/badges/version/sentimentBR)](https://cran.r-project.org/package=sentimentBR)
+[![CRAN
+Download](https://cranlogs.r-pkg.org/badges/grand-total/sentimentBR)](https://cran.r-project.org/package=sentimentBR)
+<!-- badges: end -->
 
-Venho compartilhar uma nova abordagem do algoritmo **Naive Bayes** que
-junto com meu orientador [**Ronei Moraes**](mailto:ronei@de.ufpb.br)
-propusemos no meu TCC de graduação em Estatística defendido no fim de
-2014 na UFPB ([link para a documento do TCC intitulado como *‘Sistema de
-avaliação de treinamento baseado em realidade virtual usando rede de
-probabilidade fuzzy fundamentada na distribuição Normal
+Última Atualização: 17-10-2021
+
+#### Família de Classificadores utilizando Naive Bayes e Fuzzy Naive Bayes
+
+## Resumo:
+
+Um dos classificadores, foi uma nova abordagem do algoritmo **Naive
+Bayes** que junto com meu orientador [**Ronei
+Moraes**](mailto:ronei@de.ufpb.br) propusemos no meu TCC de graduação em
+Estatística defendido no fim de 2014 na UFPB ([link para a documento do
+TCC intitulado como *‘Sistema de avaliação de treinamento baseado em
+realidade virtual usando rede de probabilidade fuzzy fundamentada na
+distribuição Normal
 Fuzzy.’*](http://www.de.ufpb.br/graduacao/tcc/TCC2014p2Jodavid.pdf)), e
 publicado em periódico esse ano (2021) com o título [*‘A New Bayesian
 Network Based on Gaussian Naive Bayes with Fuzzy Parameters for Training
@@ -19,134 +30,89 @@ Simulators’*](https://link.springer.com/article/10.1007/s40815-020-00936-4)
 (publicado na [International Journal of Fuzzy
 Systems](https://www.springer.com/journal/40815)).
 
-## Publicação:
+## Instalação do pacote:
 
-Foi feito um post com detalhamentos teóricos na página:
-<https://jodavid.github.io/post/>
+``` r
+# Instalando
+install.packages("devtools")
+devtools::install_github("Jodavid/NaiveBayesClassifiers")
+
+# Chamando o pacote
+library(NaiveBayesClassifiers)
+```
 
 ## Utilização:
 
 ### Exemplo 1:
 
 ``` r
-# --------------------------
-# Banco iris
-# -----------
-set.seed(1) # determinando uma semente
-x <- sample(1:150,150,replace = F) # Gerando uma amostra para aleatorizar os dados
-iris <- iris[x,] # aleatorizando os dados do iris
-# ----------------------------------
-# A coluna a ser classificada é a primeira no banco de dados
-head(iris,3)
-#>     Sepal.Length Sepal.Width Petal.Length Petal.Width    Species
-#> 68           5.8         2.7          4.1         1.0 versicolor
-#> 129          6.4         2.8          5.6         2.1  virginica
-#> 43           4.4         3.2          1.3         0.2     setosa
-# ----------------------------------
-# Separando em Treinamento e Teste (70% / 30%)
-amostratreino <- sample(1:nrow(iris), round(0.8*nrow(iris)), replace = F)
-# ----------------
-Treinamento <- iris[amostratreino,]
-# ----------------
-Teste <- iris[-amostratreino,]
-# ----------------------------------
-library(FuzzyNaiveBayes)
+library(NaiveBayesClassifiers)
+library(caret)
+#> Carregando pacotes exigidos: lattice
+#> Carregando pacotes exigidos: ggplot2
+#' ---------------------------------------------
+#' Abaixo seguem como são utilizadas as funções:
+#' --------------
+#' Lendo uma base de dados:
+#'
+#' Dados de treinamento real:
+data(VirtualRealityData)
 
-teste = Teste[,-5]
 
-fit_FGNB <- FuzzyGaussianNaiveBayes(train =  Treinamento[,-5],
-                                    cl = Treinamento[,5], metd = 1, cores = 2)
+# --------------------------------------------------
+# FuzzyGaussianNaiveBayes com parâmetros Fuzzy
+
+# Splitting into Training and Testing
+split <- caTools::sample.split(t(VirtualRealityData[,1]), SplitRatio = 0.7)
+Train <- subset(VirtualRealityData, split == "TRUE")
+Test <- subset(VirtualRealityData, split == "FALSE")
+# ----------------
+
+test = Test[,-4]
+
+fit_FGNB <- FuzzyGaussianNaiveBayes(train =  Train[,-4],
+                                    cl = Train[,4], metd = 1, cores = 1)
+
 
 print(fit_FGNB)
 #> 
 #> Fuzzy Gaussian Naive Bayes Classifier for Discrete Predictors
 #> 
 #> Variables:
-#> [1] "Sepal.Length" "Sepal.Width"  "Petal.Length" "Petal.Width" 
-#> Class:
-#> [1] "setosa"     "versicolor" "virginica"
-pred_FGNB <- predict(fit_FGNB, teste)
-
-# ----------------------------------
-# ----------------------------------
-# Gaussian Naive Bayes com parâmetros Fuzzy
-TabelaFGNB <- table(pred_FGNB,Teste[,5]) 
-TabelaFGNB # Matriz de Confusão
-#>             
-#> pred_FGNB    setosa versicolor virginica
-#>   setosa          9          0         0
-#>   versicolor      0          9         2
-#>   virginica       0          0        10
-sum(diag(TabelaFGNB))/sum(TabelaFGNB) # Acurácia
-#> [1] 0.9333333
-```
-
-### Exemplo 2:
-
-Site do Banco de dados:
-<https://archive.ics.uci.edu/ml/datasets/Abalone>
-
-``` r
-# --------------------------
-# Lendo um banco de dados
-dados <- read.table(url("https://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.data"),
-                    sep=",")
-# -------------------------
-# Renomeando as colunas
-names <- c("Sex","Length","Diameter","Height","Whole",
-           "Shucked weight","Viscera weight","Shell weight",
-           "Rings")
-# ----------------
-colnames(dados) <- names
-# ----------------------------------
-# A coluna a ser classificada é a primeira no banco de dados
-head(dados,3)
-#>   Sex Length Diameter Height  Whole Shucked weight Viscera weight Shell weight
-#> 1   M  0.455    0.365  0.095 0.5140         0.2245         0.1010         0.15
-#> 2   M  0.350    0.265  0.090 0.2255         0.0995         0.0485         0.07
-#> 3   F  0.530    0.420  0.135 0.6770         0.2565         0.1415         0.21
-#>   Rings
-#> 1    15
-#> 2     7
-#> 3     9
-# ----------------------------------
-# Separando em Treinamento e Teste (80% / 20%)
-amostratreino <- sample(1:nrow(dados), round(0.8*nrow(dados)), replace = F)
-# ----------------
-Treinamento <- dados[amostratreino,]
-# ----------------
-Teste <- dados[-amostratreino,]
-# ----------------------------------
-# ----------------------------------
-library(FuzzyNaiveBayes)
-
-teste = Teste[,-1]
-
-fit_FGNB <- FuzzyGaussianNaiveBayes(train =  Treinamento[,-1],
-                                    cl = Treinamento[,1], metd = 1, cores = 2)
-
-print(fit_FGNB)
-#> 
-#> Fuzzy Gaussian Naive Bayes Classifier for Discrete Predictors
-#> 
-#> Variables:
-#> [1] "Length"         "Diameter"       "Height"         "Whole"         
-#> [5] "Shucked weight" "Viscera weight" "Shell weight"   "Rings"         
+#> [1] "V1" "V2" "V3"
 #> Class:
 #> NULL
-pred_FGNB <- predict(fit_FGNB, teste)
-# ----------------------------------
-# ----------------------------------
-# Verificando a Acurácia
-# ---------------------
-# Gaussian Naive Bayes com parâmetros Fuzzy
-TabelaFGNB <- table(pred_FGNB,Teste[,1]) 
-TabelaFGNB # Matriz de Confusão
-#>          
-#> pred_FGNB   F   I   M
-#>         F  58  10  70
-#>         I  64 209  85
-#>         M 132  38 169
-sum(diag(TabelaFGNB))/sum(TabelaFGNB) # Acurácia
-#> [1] 0.5221557
+saida <- predict(fit_FGNB, test)
+confusionMatrix(factor(Test[,4]), saida)
+#> Confusion Matrix and Statistics
+#> 
+#>           Reference
+#> Prediction  1  2  3
+#>          1 59  5  1
+#>          2  8 42 13
+#>          3  0 14 38
+#> 
+#> Overall Statistics
+#>                                           
+#>                Accuracy : 0.7722          
+#>                  95% CI : (0.7039, 0.8313)
+#>     No Information Rate : 0.3722          
+#>     P-Value [Acc > NIR] : <2e-16          
+#>                                           
+#>                   Kappa : 0.6567          
+#>                                           
+#>  Mcnemar's Test P-Value : 0.6304          
+#> 
+#> Statistics by Class:
+#> 
+#>                      Class: 1 Class: 2 Class: 3
+#> Sensitivity            0.8806   0.6885   0.7308
+#> Specificity            0.9469   0.8235   0.8906
+#> Pos Pred Value         0.9077   0.6667   0.7308
+#> Neg Pred Value         0.9304   0.8376   0.8906
+#> Prevalence             0.3722   0.3389   0.2889
+#> Detection Rate         0.3278   0.2333   0.2111
+#> Detection Prevalence   0.3611   0.3500   0.2889
+#> Balanced Accuracy      0.9137   0.7560   0.8107
+saida <- predict(fit_FGNB, test, type = "matrix")
 ```
