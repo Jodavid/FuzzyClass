@@ -19,7 +19,7 @@
 #      Fuzzy Naive Bayes Triangular Classifier
 # -----------------------------------------------
 
-#' \code{NaiveBayesTriangular} Naive Bayes Trapeizodal Classifier
+#' \code{FuzzyTriangNaiveBayes} Naive Bayes Trianglar Classifier
 #'
 #'
 #' @param train matrix or data frame of training set cases.
@@ -30,7 +30,7 @@
 #' @return A vector of classifications
 #'
 #' @references
-#' \insertRef{moraes2021new}{NaiveBayesClassifiers}
+#' \insertRef{moraes2021new}{FuzzyClass}
 #'
 #' @examples
 #'
@@ -45,7 +45,7 @@
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
 #' test = Test[,-5]
-#' fit_NBT <- NaiveBayesTriangular(train =  Train[,-5],
+#' fit_NBT <- FuzzyTriangNaiveBayes(train =  Train[,-5],
 #'                                     cl = Train[,5], cores = 2)
 #'
 #' pred_NBT <- predict(fit_NBT, test)
@@ -55,11 +55,11 @@
 #'
 #'
 #' @export
-NaiveBayesTriangular <- function( train, cl, cores = 2, fuzzy = T)
-  UseMethod("NaiveBayesTriangular")
+FuzzyTriangNaiveBayes <- function( train, cl, cores = 2, fuzzy = T)
+  UseMethod("FuzzyTriangNaiveBayes")
 
 #' @export
-NaiveBayesTriangular.default <- function( train, cl, cores = 2, fuzzy = T){
+FuzzyTriangNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = T){
 
   # --------------------------------------------------------
   # Estimating class parameters
@@ -177,14 +177,14 @@ NaiveBayesTriangular.default <- function( train, cl, cores = 2, fuzzy = T){
                  pk = pk,
                  fuzzy = fuzzy
                  ),
-            class = "NaiveBayesTriangular")
+            class = "FuzzyTriangNaiveBayes")
 
 }
 # -------------------------
 
 
 #' @export
-print.NaiveBayesTriangular <- function(x, ...){
+print.FuzzyTriangNaiveBayes <- function(x, ...){
 
   if(x$fuzzy == T){
   # -----------------
@@ -201,7 +201,7 @@ print.NaiveBayesTriangular <- function(x, ...){
 }
 
 #' @export
-predict.NaiveBayesTriangular <- function(object,
+predict.FuzzyTriangNaiveBayes <- function(object,
                                             newdata,
                                           type = "class",
                                             ...){

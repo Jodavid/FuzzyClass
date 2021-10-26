@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Fuzzy Gaussian Naive Bayes Classifier — FuzzyGaussianNaiveBayes • NaiveBayesClassifiers</title>
+<title>Gaussian Naive Bayes Classifier — FuzzyGaussianNaiveBayes • FuzzyClass</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Fuzzy Gaussian Naive Bayes Classifier — FuzzyGaussianNaiveBayes" />
-<meta property="og:description" content="FuzzyGaussianNaiveBayes Fuzzy Gaussian Naive Bayes Classifier" />
+<meta property="og:title" content="Gaussian Naive Bayes Classifier — FuzzyGaussianNaiveBayes" />
+<meta property="og:description" content="FuzzyGaussianNaiveBayes Gaussian Naive Bayes Classifier Zadeh-based" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -79,7 +79,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">NaiveBayesClassifiers</a>
+        <a class="navbar-link" href="../index.html">FuzzyClass</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
@@ -98,7 +98,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/Jodavid/NaiveBayesClassifiers/">
+  <a href="https://github.com/Jodavid/FuzzyClass/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -116,16 +116,16 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Fuzzy Gaussian Naive Bayes Classifier</h1>
-    <small class="dont-index">Source: <a href='https://github.com/Jodavid/NaiveBayesClassifiers/blob/master/R/FuzzyGaussianNaiveBayes.R'><code>R/FuzzyGaussianNaiveBayes.R</code></a></small>
+    <h1>Gaussian Naive Bayes Classifier</h1>
+    <small class="dont-index">Source: <a href='https://github.com/Jodavid/FuzzyClass/blob/master/R/FuzzyGaussianNaiveBayes.R'><code>R/FuzzyGaussianNaiveBayes.R</code></a></small>
     <div class="hidden name"><code>FuzzyGaussianNaiveBayes.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>FuzzyGaussianNaiveBayes</code> Fuzzy Gaussian Naive Bayes Classifier</p>
+    <p><code>FuzzyGaussianNaiveBayes</code> Gaussian Naive Bayes Classifier Zadeh-based</p>
     </div>
 
-    <pre class="usage"><span class='fu'>FuzzyGaussianNaiveBayes</span><span class='op'>(</span><span class='va'>train</span>, <span class='va'>cl</span>, metd <span class='op'>=</span> <span class='fl'>1</span>, cores <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>FuzzyGaussianNaiveBayes</span><span class='op'>(</span><span class='va'>train</span>, <span class='va'>cl</span>, cores <span class='op'>=</span> <span class='fl'>2</span>, fuzzy <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,12 +139,12 @@
       <td><p>factor of true classifications of training set</p></td>
     </tr>
     <tr>
-      <th>metd</th>
-      <td><p>Method of transforming the triangle into scalar, It is the type of data entry for the test sample, use metd 1 if you want to use the Baricentro technique and use metd 2 if you want to use the Q technique of the uniformity test (article: Directional Statistics and Shape analysis).</p></td>
-    </tr>
-    <tr>
       <th>cores</th>
       <td><p>how many cores of the computer do you want to use (default = 2)</p></td>
+    </tr>
+    <tr>
+      <th>fuzzy</th>
+      <td><p>boolean variable to use the membership function</p></td>
     </tr>
     </table>
 
@@ -153,9 +153,9 @@
     <p>A vector of classifications</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Moraes RM, Ferreira JA, Machado LS (2021).
-&#8220;A New Bayesian Network Based on Gaussian Naive Bayes with Fuzzy Parameters for Training Assessment in Virtual Simulators.&#8221;
-<em>International Journal of Fuzzy Systems</em>, <b>23</b>(3), 849--861.</p>
+    <p>MARCOS DE MORAES R, dos Santos Machado L (2012).
+&#8220;Online Assessment in Medical Simulators Based on Virtual Reality Using Fuzzy Gaussian Naive Bayes.&#8221;
+<em>Journal of Multiple-Valued Logic \&amp; Soft Computing</em>, <b>18</b>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
@@ -170,12 +170,12 @@
 <span class='co'># matrix or data frame of test set cases.</span>
 <span class='co'># A vector will be interpreted as a row vector for a single case.</span>
 <span class='va'>test</span> <span class='op'>=</span> <span class='va'>Test</span><span class='op'>[</span>,<span class='op'>-</span><span class='fl'>5</span><span class='op'>]</span>
-<span class='va'>fit_FGNB</span> <span class='op'>&lt;-</span> <span class='fu'>FuzzyGaussianNaiveBayes</span><span class='op'>(</span>train <span class='op'>=</span>  <span class='va'>Train</span><span class='op'>[</span>,<span class='op'>-</span><span class='fl'>5</span><span class='op'>]</span>,
-                                    cl <span class='op'>=</span> <span class='va'>Train</span><span class='op'>[</span>,<span class='fl'>5</span><span class='op'>]</span>, metd <span class='op'>=</span> <span class='fl'>1</span>, cores <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
+<span class='va'>fit_GNB</span> <span class='op'>&lt;-</span> <span class='fu'>FuzzyGaussianNaiveBayes</span><span class='op'>(</span>train <span class='op'>=</span>  <span class='va'>Train</span><span class='op'>[</span>,<span class='op'>-</span><span class='fl'>5</span><span class='op'>]</span>,
+                                    cl <span class='op'>=</span> <span class='va'>Train</span><span class='op'>[</span>,<span class='fl'>5</span><span class='op'>]</span>, cores <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 
-<span class='va'>pred_FGNB</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>fit_FGNB</span>, <span class='va'>test</span><span class='op'>)</span>
+<span class='va'>pred_GNB</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>fit_GNB</span>, <span class='va'>test</span><span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>pred_FGNB</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>pred_GNB</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] setosa setosa setosa setosa setosa setosa
 #&gt; Levels: setosa versicolor virginica</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>Test</span><span class='op'>[</span>,<span class='fl'>5</span><span class='op'>]</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] setosa setosa setosa setosa setosa setosa

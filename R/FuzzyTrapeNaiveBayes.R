@@ -19,7 +19,7 @@
 #      Fuzzy Naive Bayes Trapeizodal Classifier
 # -----------------------------------------------
 
-#' \code{NaiveBayesTrapeizodal} Naive Bayes Trapeizodal Classifier
+#' \code{FuzzyTrapeNaiveBayes} Naive Bayes Trapeizodal Classifier
 #'
 #'
 #' @param train matrix or data frame of training set cases.
@@ -30,7 +30,7 @@
 #' @return A vector of classifications
 #'
 #' @references
-#' \insertRef{moraes2021new}{NaiveBayesClassifiers}
+#' \insertRef{moraes2021new}{FuzzyClass}
 #'
 #' @examples
 #'
@@ -45,7 +45,7 @@
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
 #' test = Test[,-5]
-#' fit_NBT <- NaiveBayesTrapeizodal(train =  Train[,-5],
+#' fit_NBT <- FuzzyTrapeNaiveBayes(train =  Train[,-5],
 #'                                     cl = Train[,5], cores = 2)
 #'
 #' pred_NBT <- predict(fit_NBT, test)
@@ -55,11 +55,11 @@
 #'
 #'
 #' @export
-NaiveBayesTrapeizodal <- function( train, cl, cores = 2, fuzzy = T)
-  UseMethod("NaiveBayesTrapeizodal")
+FuzzyTrapeNaiveBayes <- function( train, cl, cores = 2, fuzzy = T)
+  UseMethod("FuzzyTrapeNaiveBayes")
 
 #' @export
-NaiveBayesTrapeizodal.default <- function( train, cl, cores = 2, fuzzy = T){
+FuzzyTrapeNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = T){
 
   # --------------------------------------------------------
   # Estimating class parameters
@@ -97,14 +97,14 @@ NaiveBayesTrapeizodal.default <- function( train, cl, cores = 2, fuzzy = T){
                  intervalos = intervalos,
                  fuzzy = fuzzy
                  ),
-            class = "NaiveBayesTrapeizodal")
+            class = "FuzzyTrapeNaiveBayes")
 
 }
 # -------------------------
 
 
 #' @export
-print.NaiveBayesTrapeizodal <- function(x, ...){
+print.FuzzyTrapeNaiveBayes <- function(x, ...){
 
   if(x$fuzzy == T){
   # -----------------
@@ -121,7 +121,7 @@ print.NaiveBayesTrapeizodal <- function(x, ...){
 }
 
 #' @export
-predict.NaiveBayesTrapeizodal <- function(object,
+predict.FuzzyTrapeNaiveBayes <- function(object,
                                             newdata,
                                           type = "class",
                                             ...){

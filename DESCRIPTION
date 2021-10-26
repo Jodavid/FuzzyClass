@@ -1,4 +1,4 @@
-Package: NaiveBayesClassifiers
+Package: FuzzyClass
 Title: Fuzzy e Non-Fuzzy Naive Bayes Classifiers
 Version: 0.1.0
 Authors@R:
@@ -28,5 +28,5 @@ Depends:
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-URL: https://github.com/Jodavid/NaiveBayesClassifiers
-BugReports: https://github.com/Jodavid/NaiveBayesClassifiers/issues
+URL: https://github.com/Jodavid/FuzzyClass
+BugReports: https://github.com/Jodavid/FuzzyClass/issues

@@ -10,12 +10,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-# NaiveBayesClassifiers <img src="man/figures/logo.png" align="right" height="139"/>
+# FuzzyClass <img src="man/figures/logo.png" align="right" height="139"/>
 
 <!-- badges: start -->
 
-[![CRAN version](https://www.r-pkg.org/badges/version/sentimentBR)](https://cran.r-project.org/package=sentimentBR)
-[![CRAN Download](https://cranlogs.r-pkg.org/badges/grand-total/sentimentBR)](https://cran.r-project.org/package=sentimentBR)
+[![CRAN version](https://www.r-pkg.org/badges/version/FuzzyClass)](https://cran.r-project.org/package=sFuzzyClass)
+[![CRAN Download](https://cranlogs.r-pkg.org/badges/grand-total/FuzzyClass)](https://cran.r-project.org/package=FuzzyClass)
 <!-- badges: end -->
 
 
@@ -23,21 +23,23 @@ knitr::opts_chunk$set(
 
 #### Família de Classificadores utilizando Naive Bayes e Fuzzy Naive Bayes
 
-
+<!--
 ## Resumo:
 
 
 Um dos classificadores, foi uma nova abordagem do algoritmo **Naive Bayes** que junto com meu orientador [**Ronei Moraes**](mailto:ronei@de.ufpb.br) propusemos no meu TCC de graduação em Estatística defendido no fim de 2014 na UFPB ([link para a documento do TCC intitulado como *'Sistema de avaliação de treinamento baseado em realidade virtual usando rede de probabilidade fuzzy fundamentada na distribuição Normal Fuzzy.'*](http://www.de.ufpb.br/graduacao/tcc/TCC2014p2Jodavid.pdf)), e publicado em periódico esse ano (2021) com o título [*'A New Bayesian Network Based on Gaussian Naive Bayes with Fuzzy Parameters for Training Assessment in Virtual Simulators'*](https://link.springer.com/article/10.1007/s40815-020-00936-4) (publicado na [International Journal of Fuzzy Systems](https://www.springer.com/journal/40815)).
+-->
+
 
 ## Instalação do pacote:
 
 ```{r, echo=TRUE, eval=FALSE}
 # Instalando
 install.packages("devtools")
-devtools::install_github("Jodavid/NaiveBayesClassifiers")
+devtools::install_github("Jodavid/FuzzyClass")
 
 # Chamando o pacote
-library(NaiveBayesClassifiers)
+library(FuzzyClass)
 ```
 
 
@@ -47,7 +49,7 @@ library(NaiveBayesClassifiers)
 
 ```{r}
 
-library(NaiveBayesClassifiers)
+library(FuzzyClass)
 library(caret)
 
 #' ---------------------------------------------
@@ -57,10 +59,13 @@ library(caret)
 #'
 #' Dados de treinamento real:
 data(VirtualRealityData)
+```
 
+#### Fuzzy Gaussian Naive Bayes com parâmetros Fuzzy
 
+```{r}
 # --------------------------------------------------
-# FuzzyGaussianNaiveBayes com parâmetros Fuzzy
+# Fuzzy Gaussian Naive Bayes com parâmetros Fuzzy
 
 # Splitting into Training and Testing
 split <- caTools::sample.split(t(VirtualRealityData[,1]), SplitRatio = 0.7)
@@ -70,7 +75,7 @@ Test <- subset(VirtualRealityData, split == "FALSE")
 
 test = Test[,-4]
 
-fit_FGNB <- FuzzyGaussianNaiveBayes(train =  Train[,-4],
+fit_FGNB <- GauNBFuzzyParam(train =  Train[,-4],
                                     cl = Train[,4], metd = 1, cores = 1)
 
 
@@ -80,3 +85,85 @@ confusionMatrix(factor(Test[,4]), saida)
 
 saida <- predict(fit_FGNB, test, type = "matrix")
 ```
+
+#### Fuzzy Gaussian Naive Bayes baseado em Zadeh
+
+```{r}
+fit_FGNB <- FuzzyGaussianNaiveBayes(train =  Train[,-4],
+                                    cl = Train[,4], cores = 1,
+                                    fuzzy = T)
+print(fit_FGNB)
+saida <- predict(fit_FGNB, test)
+confusionMatrix(factor(Test[,4]), saida)
+
+saida <- predict(fit_FGNB, test, type = "matrix")
+
+# -----
+fit_GNB <- FuzzyGaussianNaiveBayes(train =  Train[,-4],
+                               cl = Train[,4], cores = 2,
+                               fuzzy = F)
+print(fit_GNB)
+
+saida <- predict(fit_GNB, test)
+confusionMatrix(factor(Test[,4]), saida)
+
+saida <- predict(fit_GNB, test, type = "matrix")
+
+```
+
+#### Fuzzy Naive Bayes Triangular
+
+```{r}
+fit_FNBT <- FuzzyTriangNaiveBayes(train =  Train[,-4],
+                                  cl = Train[,4], cores = 2,
+                                  fuzzy = T)
+
+print(fit_FNBT)
+
+saida <- predict(fit_FNBT, test)
+confusionMatrix(factor(Test[,4]), saida)
+
+saida <- predict(fit_FNBT, test, type = "matrix")
+
+# ----------------
+
+fit_NBT <- FuzzyTriangNaiveBayes(train =  Train[,-4],
+                                 cl = Train[,4], cores = 2,
+                                 fuzzy = F)
+print(fit_NBT)
+
+saida <- predict(fit_NBT, test)
+confusionMatrix(factor(Test[,4]), saida)
+
+saida <- predict(fit_NBT, test, type = "matrix")
+
+```
+
+#### Fuzzy Naive Bayes Trapezoidal
+
+```{r}
+
+fit_FNBT <- FuzzyTrapeNaiveBayes(train =  Train[,-4],
+                                    cl = Train[,4], cores = 4,
+                                  fuzzy = T)
+print(fit_FNBT)
+
+saida <- predict(fit_FNBT, test)
+confusionMatrix(factor(Test[,4]), saida)
+
+saida <- predict(fit_FNBT, test, type = "matrix")
+
+# ----------------
+
+fit_NBT <- FuzzyTrapeNaiveBayes(train =  Train[,-4],
+                                  cl = Train[,4], cores = 2,
+                                  fuzzy = F)
+print(fit_NBT)
+
+saida <- predict(fit_NBT, test)
+confusionMatrix(factor(Test[,4]), saida)
+
+saida <- predict(fit_NBT, test, type = "matrix")
+
+```
+

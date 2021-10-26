@@ -1,5 +1,6 @@
 # --------------------------------------------------
 #             Fuzzy Gaussian Naive Bayes
+#                       Zadeh
 #
 # data: 18.09.2021
 # version: 0.1
@@ -15,23 +16,23 @@
 # -------------------
 
 # -----------------------------------------------
-#      Fuzzy Gaussian Naive Bayes Classifier
+#      Gaussian Naive Bayes Classifier
 # -----------------------------------------------
 
-#' Fuzzy Gaussian Naive Bayes Classifier
+#' Gaussian Naive Bayes Classifier
 #'
-#' \code{FuzzyGaussianNaiveBayes} Fuzzy Gaussian Naive Bayes Classifier
+#' \code{FuzzyGaussianNaiveBayes} Gaussian Naive Bayes Classifier Zadeh-based
 #'
 #'
 #' @param train matrix or data frame of training set cases.
 #' @param cl factor of true classifications of training set
-#' @param metd Method of transforming the triangle into scalar, It is the type of data entry for the test sample, use metd 1 if you want to use the Baricentro technique and use metd 2 if you want to use the Q technique of the uniformity test (article: Directional Statistics and Shape analysis).
 #' @param cores  how many cores of the computer do you want to use (default = 2)
+#' @param fuzzy boolean variable to use the membership function
 #'
 #' @return A vector of classifications
 #'
 #' @references
-#' \insertRef{moraes2021new}{NaiveBayesClassifiers}
+#' \insertRef{marcos2012online}{FuzzyClass}
 #'
 #' @examples
 #'
@@ -46,12 +47,12 @@
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
 #' test = Test[,-5]
-#' fit_FGNB <- FuzzyGaussianNaiveBayes(train =  Train[,-5],
-#'                                     cl = Train[,5], metd = 1, cores = 2)
+#' fit_GNB <- FuzzyGaussianNaiveBayes(train =  Train[,-5],
+#'                                     cl = Train[,5], cores = 2)
 #'
-#' pred_FGNB <- predict(fit_FGNB, test)
+#' pred_GNB <- predict(fit_GNB, test)
 #'
-#' head(pred_FGNB)
+#' head(pred_GNB)
 #' head(Test[,5])
 #'
 #' @importFrom stats cov dnorm qchisq qnorm
@@ -59,69 +60,131 @@
 #' @importFrom Rdpack reprompt
 #'
 #' @export
-FuzzyGaussianNaiveBayes <- function( train, cl, metd = 1, cores = 2)
+FuzzyGaussianNaiveBayes <- function( train, cl, cores = 2, fuzzy = T)
   UseMethod("FuzzyGaussianNaiveBayes")
 
 #' @export
-FuzzyGaussianNaiveBayes.default <- function( train, cl, metd = 1, cores = 2){
+FuzzyGaussianNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = TRUE){
 
   # --------------------------------------------------------
   # Estimating class parameters
   cols <- ncol(train) # Number of variables
   dados <- train; # training data matrix
   M <- cl; # true classes
+  # -------------------------------
+  N <- nrow(dados) # Number of observations
+  # -------------------------------
+  # --------------------------------------------------------
+  # RETIRADO DO CODIGO DO MATLAB
+  # -----------------------------
+  # % Admitindo que a distribuicao estatistica do vetor de dados, dadas as classes sejam normais,
+  # % pode-se usar a mesma estrutura de maxima verossimilhanca do Classificador Bayesiano.
+  # % Assim, temos que:
+  #   % ln p(k\X) = ln (mu_k(X)) + ln (p_k(X)) - 0.5*ln(det(covariancia_k)) - 0.5*(X-media(X))*inversa_covar_k*(X(1:d,j)-media(1:d,1))
+  # %
+  # % Geracao das funcoes de pertinencias por histograma de frequencias:
+  #   % - Calcular os valores maximo e minimo de cada dimensao
+  # % - Aplicar a forma de Sturges para gerar os intervalos
+  # %   Sturges = 1+ 3.3*log10(N)
+  # % - Encontrar as frequencias para cada combinacao dos dados
+  # % - Armazenar essas frequencias em uma matriz multimensional
+  # -----------------------------
+  class <- length(unique(M))
+  names_class <- unique(M)
+  sizes <- table(factor(M))#sapply(1:class, function(x) sum(M==x)) # Quantas observações em cada classe
+  Sturges <- round(1+ 3.3*log10(sizes)) # Sturges
+  # -----------------------------
+  # Minimo de cada classe para cada variável
+  # Linhas classes, colunas variáveis
+  minimo <- lapply(1:class, function(j){
+    sapply(1:cols, function(i){
+      min(dados[M==names_class[j],i])
+    })
+  })
+  # -----------------------------
+  # Máximo de cada classe para cada variável
+  # Linhas classes, colunas variáveis
+  maximo <- lapply(1:class, function(j){
+    sapply(1:cols, function(i){
+      max(dados[M==names_class[j],i])
+    })
+  })
+  # -----------------------------
+  AT_classe <- lapply(1:class, function(i) maximo[[i]]-minimo[[i]])
+  # -----------------------------
+  Comprim_Intervalo = lapply(1:class, function(i) AT_classe[[i]]/Sturges[i])
+  # --------------------------------------------------------
+  # Lista dentro Lista, dimensões
+  Freq <- lapply(1:class, function(i){
+
+    array(0,dim = Sturges)
+
+  })
+  # ----------------------
+
+  # Loop nos dados por classe [CRIAR]
+
+  Pertinencias <- lapply(1:length(unique(M)), function(i){
+
+    dados2 <- dados[M==names_class[i],]
+    # laco nas observações de cada grupo
+    for(t in 1:nrow(dados2)){
+      x <- dados2[t,] # Observacao
+
+      saida <- floor((x-minimo[[i]])/Comprim_Intervalo[[i]]) + 1
+      # ---
+      aux <- (saida > Sturges[i])
+      aux <- which(aux==T)
+      if(length(aux)>0) saida[aux] <- saida[aux]-1
+      # ---
+      # Encontrando posição de aumentar uma frequencia
+      res <- 0;
+      tamanho_saida <- length(saida)
+      if(tamanho_saida > 1 ){
+        for(j in tamanho_saida:2) res <- res + (saida[j]-1)*(Sturges[i]^(j-1))
+      }
+      res <- res + saida[1]
+      # ---
+      # ---
+      Freq[[i]][as.numeric(res)] = Freq[[i]][as.numeric(res)] +1
+      # ---
+      Freq[[i]][is.na(Freq[[i]])] <- 0
+    }
+    # Fim do for
+
+
+    Pertinencia <- Freq[[i]]/sizes[i]
+
+    return(Pertinencia)
+
+  })
   # --------------------------------------------------------
   # Finding Mu and Sigma for each class
   medias <- lapply(1:length(unique(M)), function(i) colMeans( subset( dados, M == unique(M)[i] ) ) )
   varian <- lapply(1:length(unique(M)), function(i) diag( diag( cov( subset( dados, M==unique(M)[i] ) ) ), (cols), (cols) ) )
   # --------------------------------------------------------
-  # --------------------------------------------------------
-  # Estimating Triangular Parameters
-  alpha <- seq(0.0001,1.1,0.1)
-  # -------------------------------
-  N <- nrow(dados) # Number of observations
-  # -------------------------------
-  #  Average Parameters
-  # ------------------
-  Parameters_media <- lapply(1:length(medias),function(i){ # loop to groups
-    lapply(1:length(medias[[1]]),function(k){ # loop to dimensions
-      round(t(sapply(1:length(alpha),function(j){
-        c(medias[[i]][k]-(qnorm(1-alpha[j]/2)*(sqrt(varian[[i]][k,k]/N))),
-          medias[[i]][k]+(qnorm(1-alpha[j]/2)*(sqrt(varian[[i]][k,k]/N))))
-      }))
-      ,3)
-    })
-  })
-  # -------------------------------
-  # Variance Parameters
-  # ------------------
-  Parameters_varian <- lapply(1:length(medias),function(i){ # loop to groups
-    lapply(1:length(medias[[1]]),function(k){ # loop to dimensions
-      round(t(sapply(1:length(alpha),function(j){
-        beta=0.05 # previously fixed
-        lambda=alpha[j]
-        # ------
-        L <- (1-lambda)*qchisq(p =1-(beta/2),N-1) + (lambda*(N-1))
-        R <- (1-lambda)*qchisq(p =beta/2,N-1) + (lambda*(N-1))
-        # ------
-        c( ((N-1)*varian[[i]][k,k])/L,
-           ((N-1)*varian[[i]][k,k])/R)
-        # ------
-      }))
-      ,3)
-    })
-  })
+  # Probabilidade a priori das classes - consideradas iguais
+  pk <- rep(1/class,class)
+  # -----------------------
+  logaritmo <-  log(pk);
+  log_determinante <- lapply(1:length(unique(M)), function(i) 0.5*log(det(varian[[i]])))
+  inversa_covar <- lapply(1:length(unique(M)), function(i) MASS::ginv(varian[[i]]))
+  # -----------------------
 
  # -------------------------------------------------------
-  structure(list(Parameters_varian = Parameters_varian,
-                 Parameters_media = Parameters_media,
-                 medias = medias,
-                 varian = varian,
-                 cols = cols,
-                 M = M,
-                 alpha = alpha,
-                 metd = metd,
-                 cores = cores
+  structure(list( minimo = minimo,
+                  maximo = maximo,
+                  Comprim_Intervalo = Comprim_Intervalo,
+                  fuzzy = fuzzy,
+                  Sturges = Sturges,
+                  Pertinencias = Pertinencias,
+                  log_determinante = log_determinante,
+                  logaritmo = logaritmo,
+                  inversa_covar = inversa_covar,
+                  medias = medias,
+                  cols = cols,
+                  M = M,
+                  cores = cores
                  ),
             class = "FuzzyGaussianNaiveBayes")
 
@@ -131,9 +194,16 @@ FuzzyGaussianNaiveBayes.default <- function( train, cl, metd = 1, cores = 2){
 
 #' @export
 print.FuzzyGaussianNaiveBayes <- function(x, ...){
-  # -----------------
-  cat("\nFuzzy Gaussian Naive Bayes Classifier for Discrete Predictors\n\n")
-  # -----------------
+
+  if(x$fuzzy == T){
+    # -----------------
+    cat("\nFuzzy Gaussian Naive Bayes Classifier for Discrete Predictors Zadeh-based\n\n")
+    # -----------------
+  }else{
+    # -----------------
+    cat("\nGaussian Naive Bayes Classifier for Discrete Predictors\n\n")
+    # -----------------
+  }
   cat("Variables:\n")
   print(names(x$medias[[1]]))
   cat("Class:\n")
@@ -144,26 +214,29 @@ print.FuzzyGaussianNaiveBayes <- function(x, ...){
 #' @export
 predict.FuzzyGaussianNaiveBayes <- function(object,
                                             newdata,
-                                            type = "class",
+                                       type = "class",
                                             ...){
   # --------------------------------------------------------
   #type <- match.arg("class")
   test <- as.data.frame(newdata)
   # --------------------------------------------------------
-  Parameters_varian = object$Parameters_varian
-  Parameters_media = object$Parameters_media
+  minimo = object$minimo
+  maximo = object$maximo
+  Comprim_Intervalo = object$Comprim_Intervalo
+  Sturges = object$Sturges
+  log_determinante = object$log_determinante
+  logaritmo = object$logaritmo
+  Pertinencias = object$Pertinencias
+  inversa_covar = object$inversa_covar
   medias = object$medias
-  varian = object$varian
   cols = object$cols
   M = object$M
-  alpha = object$alpha
-  metd = object$metd
   cores = object$cores
+  fuzzy = object$fuzzy
   # --------------------------------------------------------
 
   # --------------------------------------------------------
   # Calculation of triangles for each test observation
-  # sum of Logs and calculation of Barycenter
   # --------------
   N_test <- nrow(test)
   # --------------
@@ -176,54 +249,42 @@ predict.FuzzyGaussianNaiveBayes <- function(object,
     # ------------
     x <- test[h,]
     # ------------
-    triangulos_obs <-
-      lapply(1:length(medias),function(i){ # loop to groups
-        trian <- lapply(1:length(medias[[1]]),function(k){ # loop to dimensions
-          t(sapply(1:length(alpha),function(j){
-            # ------------
-            a <- dnorm(x = as.numeric(x[k]),mean = as.numeric(Parameters_media[[i]][[k]][j,1]),sd = sqrt(as.numeric(Parameters_varian[[i]][[k]][j,1])))
-            b <- dnorm(x = as.numeric(x[k]),mean = as.numeric(Parameters_media[[i]][[k]][j,2]),sd = sqrt(as.numeric(Parameters_varian[[i]][[k]][j,2])))
-            # ------------
-            c(min(a,b),max(a,b))
-            # ------------
-          }))
-        })
-        if(length(trian)>1){return(Reduce('+',trian))}else{return(trian)}
-      })
-    # ------------
-    # Center of Mass Calculation
-    vec_trian <- lapply(1:length(unique(M)), function(i) c(triangulos_obs[[i]][1,1],triangulos_obs[[i]][11,1],triangulos_obs[[i]][1,2]))
-    # --------------------------------------------------------
-    # Transforming Vector to Scalar
-    # ------------
-    R_M <- switch(metd,
-                  # ------------
-                  # Barycenter
-                  "1"={
-                    # ------------
-                    sapply(1:length(unique(M)),function(i) vec_trian[[i]][2] * (  ( (vec_trian[[i]][2] - vec_trian[[i]][1])*(vec_trian[[i]][3] - vec_trian[[i]][2]) + 1 ) / 3  ) )
-                    # ------------
-                  },
-                  "2"={
-                    # ------------
-                    # Using distance Q
-                    sapply(1:length(unique(M)),function(i){
-                      # ------------
-                      # Start 3 values
-                      y <- vec_trian[[i]]
-                      # ------------
-                      # getting the product zz*
-                      S = y%*%t(Conj(y)) # matrix k x k
-                      # ------------
-                      # getting the eigenvalues
-                      l <- eigen(S)$values
-                      # Calculating Q
-                      Q <- 3*(l[1]-l[2])^2
-                      # ------------
-                      return(Q)
-                    })
-                    # ------------
-                  })
+    R_M <- lapply(1:length(unique(M)), function(i){
+
+      saida <- abs( floor((x - minimo[[i]])/Comprim_Intervalo[[i]]) + 1)
+      # ---
+      aux1 <- x < minimo[[i]]
+      aux2 <- x > maximo[[i]]
+      # ---
+      log_Pertinencia = ifelse((T %in% aux1) | (T %in% aux2), -50, 0 )
+      # ---
+      # ---
+      # Encontrando posição de aumentar uma frequencia
+      res <- 0;
+      tamanho_saida <- length(saida)
+      if(tamanho_saida > 1 ){
+        for(j in tamanho_saida:2) res <- res + (saida[j]-1)*(Sturges[i]^(j-1))
+      }
+      res <- abs(res + saida[1])
+      # ---
+      # ---
+      if(log_Pertinencia == -50){
+        pert <- ifelse(is.na(Pertinencias[[i]][as.numeric(res)])==T, 0,  Pertinencias[[i]][as.numeric(res)] )
+        log_Pertinencia = ifelse(pert <= 0, -50, log(Pertinencias[[i]][as.numeric(res)]) )
+      }
+
+      if(fuzzy == T){
+        # --------------
+        f <- log_Pertinencia + logaritmo[i] - log_determinante[[i]] - 0.5*as.numeric(x - medias[[i]] )%*%inversa_covar[[i]]%*%as.numeric(x - medias[[i]] )
+        # --------------
+      }else{
+        # --------------
+        f <- logaritmo[i] - log_determinante[[i]] - 0.5*as.numeric(x - medias[[i]] )%*%inversa_covar[[i]]%*%as.numeric(x - medias[[i]] )
+        # --------------
+      }
+
+      return(f)
+    })
     # --------------------------------------------------------
     #R_M_class <- which.max(produto)
     R_M_class <- R_M

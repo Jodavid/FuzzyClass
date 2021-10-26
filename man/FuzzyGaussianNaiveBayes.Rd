@@ -2,24 +2,24 @@
 % Please edit documentation in R/FuzzyGaussianNaiveBayes.R
 \name{FuzzyGaussianNaiveBayes}
 \alias{FuzzyGaussianNaiveBayes}
-\title{Fuzzy Gaussian Naive Bayes Classifier}
+\title{Gaussian Naive Bayes Classifier}
 \usage{
-FuzzyGaussianNaiveBayes(train, cl, metd = 1, cores = 2)
+FuzzyGaussianNaiveBayes(train, cl, cores = 2, fuzzy = T)
 }
 \arguments{
 \item{train}{matrix or data frame of training set cases.}
 
 \item{cl}{factor of true classifications of training set}
 
-\item{metd}{Method of transforming the triangle into scalar, It is the type of data entry for the test sample, use metd 1 if you want to use the Baricentro technique and use metd 2 if you want to use the Q technique of the uniformity test (article: Directional Statistics and Shape analysis).}
-
 \item{cores}{how many cores of the computer do you want to use (default = 2)}
+
+\item{fuzzy}{boolean variable to use the membership function}
 }
 \value{
 A vector of classifications
 }
 \description{
-\code{FuzzyGaussianNaiveBayes} Fuzzy Gaussian Naive Bayes Classifier
+\code{FuzzyGaussianNaiveBayes} Gaussian Naive Bayes Classifier Zadeh-based
 }
 \examples{
 
@@ -34,15 +34,15 @@ Test <- subset(iris, split == "FALSE")
 # matrix or data frame of test set cases.
 # A vector will be interpreted as a row vector for a single case.
 test = Test[,-5]
-fit_FGNB <- FuzzyGaussianNaiveBayes(train =  Train[,-5],
-                                    cl = Train[,5], metd = 1, cores = 2)
+fit_GNB <- FuzzyGaussianNaiveBayes(train =  Train[,-5],
+                                    cl = Train[,5], cores = 2)
 
-pred_FGNB <- predict(fit_FGNB, test)
+pred_GNB <- predict(fit_GNB, test)
 
-head(pred_FGNB)
+head(pred_GNB)
 head(Test[,5])
 
 }
 \references{
-\insertRef{moraes2021new}{NaiveBayesClassifiers}
+\insertRef{marcos2012online}{FuzzyClass}
 }
