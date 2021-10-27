@@ -167,3 +167,20 @@ saida <- predict(fit_NBT, test, type = "matrix")
 
 ```
 
+#### Fuzzy Exponential Naive Bayes Classifier
+
+```{r}
+
+fit_FENB <- ExpNBFuzzyParam(train =  Train[,-4],
+                                    cl = Train[,4], metd = 1, cores = 2)
+                              
+print(fit_FENB)
+
+saida <- predict(fit_FENB, test)
+confusionMatrix(factor(Test[,4]), saida)
+
+saida <- predict(fit_FENB, test, type = "matrix")
+head(saida)
+
+```
+
