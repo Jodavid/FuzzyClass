@@ -184,3 +184,20 @@ head(saida)
 
 ```
 
+#### Fuzzy Gamma Naive Bayes Classifier
+
+```{r}
+
+fit_NBT <- FGamNB(train =  Train[,-4],
+                                    cl = Train[,4], cores = 2)
+                              
+print(fit_NBT)
+
+saida <- predict(fit_NBT, test)
+saida <- factor(saida,levels = unique(Test[,4]))
+confusionMatrix(factor(Test[,4]), saida)
+
+saida <- predict(fit_NBT, test, type = "matrix")
+head(saida)
+
+```
