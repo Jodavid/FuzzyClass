@@ -19,7 +19,7 @@
 #      Fuzzy Naive Bayes Triangular Classifier
 # -----------------------------------------------
 
-#' \code{FuzzyTriangNaiveBayes} Naive Bayes Trianglar Classifier
+#' \code{FuzzyTriangularNaiveBayes} Naive Bayes Trianglar Classifier
 #'
 #'
 #' @param train matrix or data frame of training set cases.
@@ -30,7 +30,7 @@
 #' @return A vector of classifications
 #'
 #' @references
-#' \insertRef{moraes2021new}{FuzzyClass}
+#' \insertRef{de2020online}{FuzzyClass}
 #'
 #' @examples
 #'
@@ -45,7 +45,7 @@
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
 #' test = Test[,-5]
-#' fit_NBT <- FuzzyTriangNaiveBayes(train =  Train[,-5],
+#' fit_NBT <- FuzzyTriangularNaiveBayes(train =  Train[,-5],
 #'                                     cl = Train[,5], cores = 2)
 #'
 #' pred_NBT <- predict(fit_NBT, test)
@@ -55,11 +55,11 @@
 #'
 #'
 #' @export
-FuzzyTriangNaiveBayes <- function( train, cl, cores = 2, fuzzy = T)
-  UseMethod("FuzzyTriangNaiveBayes")
+FuzzyTriangularNaiveBayes <- function( train, cl, cores = 2, fuzzy = T)
+  UseMethod("FuzzyTriangularNaiveBayes")
 
 #' @export
-FuzzyTriangNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = T){
+FuzzyTriangularNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = T){
 
   # --------------------------------------------------------
   # Estimating class parameters
@@ -177,14 +177,14 @@ FuzzyTriangNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = T){
                  pk = pk,
                  fuzzy = fuzzy
                  ),
-            class = "FuzzyTriangNaiveBayes")
+            class = "FuzzyTriangularNaiveBayes")
 
 }
 # -------------------------
 
 
 #' @export
-print.FuzzyTriangNaiveBayes <- function(x, ...){
+print.FuzzyTriangularNaiveBayes <- function(x, ...){
 
   if(x$fuzzy == T){
   # -----------------
@@ -201,7 +201,7 @@ print.FuzzyTriangNaiveBayes <- function(x, ...){
 }
 
 #' @export
-predict.FuzzyTriangNaiveBayes <- function(object,
+predict.FuzzyTriangularNaiveBayes <- function(object,
                                             newdata,
                                           type = "class",
                                             ...){

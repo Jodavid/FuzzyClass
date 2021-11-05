@@ -44,3 +44,6 @@ head(pred_FENB)
 head(Test[,4])
 
 }
+\references{
+\insertRef{rodrigues2016new}{FuzzyClass}
+}

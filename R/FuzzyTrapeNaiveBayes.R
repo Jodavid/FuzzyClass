@@ -19,7 +19,7 @@
 #      Fuzzy Naive Bayes Trapeizodal Classifier
 # -----------------------------------------------
 
-#' \code{FuzzyTrapeNaiveBayes} Naive Bayes Trapeizodal Classifier
+#' \code{FuzzyTrapezoidalNaiveBayes} Naive Bayes Trapeizodal Classifier
 #'
 #'
 #' @param train matrix or data frame of training set cases.
@@ -45,7 +45,7 @@
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
 #' test = Test[,-5]
-#' fit_NBT <- FuzzyTrapeNaiveBayes(train =  Train[,-5],
+#' fit_NBT <- FuzzyTrapezoidalNaiveBayes(train =  Train[,-5],
 #'                                     cl = Train[,5], cores = 2)
 #'
 #' pred_NBT <- predict(fit_NBT, test)
@@ -55,11 +55,11 @@
 #'
 #'
 #' @export
-FuzzyTrapeNaiveBayes <- function( train, cl, cores = 2, fuzzy = T)
-  UseMethod("FuzzyTrapeNaiveBayes")
+FuzzyTrapezoidalNaiveBayes <- function( train, cl, cores = 2, fuzzy = T)
+  UseMethod("FuzzyTrapezoidalNaiveBayes")
 
 #' @export
-FuzzyTrapeNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = T){
+FuzzyTrapezoidalNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = T){
 
   # --------------------------------------------------------
   # Estimating class parameters
@@ -97,14 +97,14 @@ FuzzyTrapeNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = T){
                  intervalos = intervalos,
                  fuzzy = fuzzy
                  ),
-            class = "FuzzyTrapeNaiveBayes")
+            class = "FuzzyTrapezoidalNaiveBayes")
 
 }
 # -------------------------
 
 
 #' @export
-print.FuzzyTrapeNaiveBayes <- function(x, ...){
+print.FuzzyTrapezoidalNaiveBayes <- function(x, ...){
 
   if(x$fuzzy == T){
   # -----------------
@@ -121,7 +121,7 @@ print.FuzzyTrapeNaiveBayes <- function(x, ...){
 }
 
 #' @export
-predict.FuzzyTrapeNaiveBayes <- function(object,
+predict.FuzzyTrapezoidalNaiveBayes <- function(object,
                                             newdata,
                                           type = "class",
                                             ...){

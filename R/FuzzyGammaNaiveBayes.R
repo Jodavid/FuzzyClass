@@ -17,10 +17,10 @@
 # -------------------
 
 # -----------------------------------------------
-#      Fuzzy Naive Bayes Triangular Classifier
+#      Fuzzy Naive Bayes Gamma Classifier
 # -----------------------------------------------
 
-#' \code{FGamNB} Fuzzy Gamma Naive Bayes
+#' \code{FuzzyGammaNaiveBayes} Fuzzy Gamma Naive Bayes
 #'
 #'
 #' @param train matrix or data frame of training set cases.
@@ -30,6 +30,8 @@
 #'
 #' @return A vector of classifications
 #'
+#' @references
+#' \insertRef{de2018fuzzy}{FuzzyClass}
 #'
 #' @examples
 #'
@@ -44,7 +46,7 @@
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
 #' test = Test[,-5]
-#' fit_NBT <- FGamNB(train =  Train[,-5],
+#' fit_NBT <- FuzzyGammaNaiveBayes(train =  Train[,-5],
 #'                                     cl = Train[,5], cores = 2)
 #'
 #' pred_NBT <- predict(fit_NBT, test)
@@ -55,11 +57,11 @@
 #' @importFrom stats dgamma
 #'
 #' @export
-FGamNB <- function( train, cl, cores = 2, fuzzy = T)
-  UseMethod("FGamNB")
+FuzzyGammaNaiveBayes <- function( train, cl, cores = 2, fuzzy = T)
+  UseMethod("FuzzyGammaNaiveBayes")
 
 #' @export
-FGamNB.default <- function( train, cl, cores = 2, fuzzy = T){
+FuzzyGammaNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = T){
 
   # --------------------------------------------------------
   # Estimating class parameters
@@ -169,14 +171,14 @@ FGamNB.default <- function( train, cl, cores = 2, fuzzy = T){
                  pk = pk,
                  fuzzy = fuzzy
   ),
-  class = "FGamNB")
+  class = "FuzzyGammaNaiveBayes")
 
 }
 # -------------------------
 
 
 #' @export
-print.FGamNB <- function(x, ...){
+print.FuzzyGammaNaiveBayes <- function(x, ...){
 
   if(x$fuzzy == T){
     # -----------------
@@ -193,7 +195,7 @@ print.FGamNB <- function(x, ...){
 }
 
 #' @export
-predict.FGamNB <- function(object,
+predict.FuzzyGammaNaiveBayes <- function(object,
                             newdata,
                             type = "class",
                             ...){

@@ -14,6 +14,10 @@
 #'
 #' @return A vector of classifications
 #'
+#' @references
+#' \insertRef{rodrigues2016new}{FuzzyClass}
+#'
+#'
 #'
 #' @examples
 #'

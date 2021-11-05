@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 Última Atualização: `r format(Sys.Date(),"%d-%m-%Y")`
 
-#### Família de Classificadores utilizando Naive Bayes e Fuzzy Naive Bayes
+#### Família de Classificadores utilizando probabilidades Fuzzy e Não Fuzzy
 
 <!--
 ## Resumo:
@@ -114,7 +114,7 @@ saida <- predict(fit_GNB, test, type = "matrix")
 #### Fuzzy Naive Bayes Triangular
 
 ```{r}
-fit_FNBT <- FuzzyTriangNaiveBayes(train =  Train[,-4],
+fit_FNBT <- FuzzyTriangularNaiveBayes(train =  Train[,-4],
                                   cl = Train[,4], cores = 2,
                                   fuzzy = T)
 
@@ -127,7 +127,7 @@ saida <- predict(fit_FNBT, test, type = "matrix")
 
 # ----------------
 
-fit_NBT <- FuzzyTriangNaiveBayes(train =  Train[,-4],
+fit_NBT <- FuzzyTriangularNaiveBayes(train =  Train[,-4],
                                  cl = Train[,4], cores = 2,
                                  fuzzy = F)
 print(fit_NBT)
@@ -143,7 +143,7 @@ saida <- predict(fit_NBT, test, type = "matrix")
 
 ```{r}
 
-fit_FNBT <- FuzzyTrapeNaiveBayes(train =  Train[,-4],
+fit_FNBT <- FuzzyTrapezoidalNaiveBayes(train =  Train[,-4],
                                     cl = Train[,4], cores = 4,
                                   fuzzy = T)
 print(fit_FNBT)
@@ -155,7 +155,7 @@ saida <- predict(fit_FNBT, test, type = "matrix")
 
 # ----------------
 
-fit_NBT <- FuzzyTrapeNaiveBayes(train =  Train[,-4],
+fit_NBT <- FuzzyTrapezoidalNaiveBayes(train =  Train[,-4],
                                   cl = Train[,4], cores = 2,
                                   fuzzy = F)
 print(fit_NBT)
@@ -188,7 +188,7 @@ head(saida)
 
 ```{r}
 
-fit_NBT <- FGamNB(train =  Train[,-4],
+fit_NBT <- FuzzyGammaNaiveBayes(train =  Train[,-4],
                                     cl = Train[,4], cores = 2)
                               
 print(fit_NBT)
