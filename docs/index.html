@@ -79,7 +79,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>Última Atualização: 05-11-2021</p>
+<p>Última Atualização: 08-11-2021</p>
 <div id="família-de-classificadores-utilizando-probabilidades-fuzzy-e-não-fuzzy" class="section level4">
 <h4 class="hasAnchor">
 <a href="#fam%C3%ADlia-de-classificadores-utilizando-probabilidades-fuzzy-e-n%C3%A3o-fuzzy" class="anchor"></a>Família de Classificadores utilizando probabilidades Fuzzy e Não Fuzzy</h4>
@@ -152,32 +152,32 @@ Um dos classificadores, foi uma nova abordagem do algoritmo **Naive Bayes** que 
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Reference</span>
 <span class="co">#&gt; Prediction  1  2  3</span>
-<span class="co">#&gt;          1 57  4  1</span>
-<span class="co">#&gt;          2  9 41 10</span>
-<span class="co">#&gt;          3  1 11 46</span>
+<span class="co">#&gt;          1 52  8  1</span>
+<span class="co">#&gt;          2  9 33  8</span>
+<span class="co">#&gt;          3  1 16 52</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Overall Statistics</span>
 <span class="co">#&gt;                                          </span>
-<span class="co">#&gt;                Accuracy : 0.8            </span>
-<span class="co">#&gt;                  95% CI : (0.734, 0.8558)</span>
-<span class="co">#&gt;     No Information Rate : 0.3722         </span>
+<span class="co">#&gt;                Accuracy : 0.7611         </span>
+<span class="co">#&gt;                  95% CI : (0.692, 0.8214)</span>
+<span class="co">#&gt;     No Information Rate : 0.3444         </span>
 <span class="co">#&gt;     P-Value [Acc &gt; NIR] : &lt;2e-16         </span>
 <span class="co">#&gt;                                          </span>
-<span class="co">#&gt;                   Kappa : 0.6997         </span>
+<span class="co">#&gt;                   Kappa : 0.641          </span>
 <span class="co">#&gt;                                          </span>
-<span class="co">#&gt;  Mcnemar's Test P-Value : 0.5785         </span>
+<span class="co">#&gt;  Mcnemar's Test P-Value : 0.4359         </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Statistics by Class:</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                      Class: 1 Class: 2 Class: 3</span>
-<span class="co">#&gt; Sensitivity            0.8507   0.7321   0.8070</span>
-<span class="co">#&gt; Specificity            0.9558   0.8468   0.9024</span>
-<span class="co">#&gt; Pos Pred Value         0.9194   0.6833   0.7931</span>
-<span class="co">#&gt; Neg Pred Value         0.9153   0.8750   0.9098</span>
-<span class="co">#&gt; Prevalence             0.3722   0.3111   0.3167</span>
-<span class="co">#&gt; Detection Rate         0.3167   0.2278   0.2556</span>
-<span class="co">#&gt; Detection Prevalence   0.3444   0.3333   0.3222</span>
-<span class="co">#&gt; Balanced Accuracy      0.9032   0.7895   0.8547</span>
+<span class="co">#&gt; Sensitivity            0.8387   0.5789   0.8525</span>
+<span class="co">#&gt; Specificity            0.9237   0.8618   0.8571</span>
+<span class="co">#&gt; Pos Pred Value         0.8525   0.6600   0.7536</span>
+<span class="co">#&gt; Neg Pred Value         0.9160   0.8154   0.9189</span>
+<span class="co">#&gt; Prevalence             0.3444   0.3167   0.3389</span>
+<span class="co">#&gt; Detection Rate         0.2889   0.1833   0.2889</span>
+<span class="co">#&gt; Detection Prevalence   0.3389   0.2778   0.3833</span>
+<span class="co">#&gt; Balanced Accuracy      0.8812   0.7204   0.8548</span>
 <span class="va">saida</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit_FGNB</span>, <span class="va">test</span>, type <span class="op">=</span> <span class="st">"matrix"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="fuzzy-gaussian-naive-bayes-baseado-em-zadeh" class="section level4">
@@ -201,32 +201,32 @@ Um dos classificadores, foi uma nova abordagem do algoritmo **Naive Bayes** que 
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Reference</span>
 <span class="co">#&gt; Prediction  1  2  3</span>
-<span class="co">#&gt;          1 61  0  1</span>
-<span class="co">#&gt;          2  5 46  9</span>
-<span class="co">#&gt;          3  0 11 47</span>
+<span class="co">#&gt;          1 57  4  0</span>
+<span class="co">#&gt;          2  4 39  7</span>
+<span class="co">#&gt;          3  0  9 60</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Overall Statistics</span>
 <span class="co">#&gt;                                           </span>
-<span class="co">#&gt;                Accuracy : 0.8556          </span>
-<span class="co">#&gt;                  95% CI : (0.7956, 0.9034)</span>
-<span class="co">#&gt;     No Information Rate : 0.3667          </span>
-<span class="co">#&gt;     P-Value [Acc &gt; NIR] : &lt;2e-16          </span>
+<span class="co">#&gt;                Accuracy : 0.8667          </span>
+<span class="co">#&gt;                  95% CI : (0.8081, 0.9127)</span>
+<span class="co">#&gt;     No Information Rate : 0.3722          </span>
+<span class="co">#&gt;     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       </span>
 <span class="co">#&gt;                                           </span>
-<span class="co">#&gt;                   Kappa : 0.7832          </span>
+<span class="co">#&gt;                   Kappa : 0.7987          </span>
 <span class="co">#&gt;                                           </span>
-<span class="co">#&gt;  Mcnemar's Test P-Value : 0.1023          </span>
+<span class="co">#&gt;  Mcnemar's Test P-Value : NA              </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Statistics by Class:</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                      Class: 1 Class: 2 Class: 3</span>
-<span class="co">#&gt; Sensitivity            0.9242   0.8070   0.8246</span>
-<span class="co">#&gt; Specificity            0.9912   0.8862   0.9106</span>
-<span class="co">#&gt; Pos Pred Value         0.9839   0.7667   0.8103</span>
-<span class="co">#&gt; Neg Pred Value         0.9576   0.9083   0.9180</span>
-<span class="co">#&gt; Prevalence             0.3667   0.3167   0.3167</span>
-<span class="co">#&gt; Detection Rate         0.3389   0.2556   0.2611</span>
-<span class="co">#&gt; Detection Prevalence   0.3444   0.3333   0.3222</span>
-<span class="co">#&gt; Balanced Accuracy      0.9577   0.8466   0.8676</span>
+<span class="co">#&gt; Sensitivity            0.9344   0.7500   0.8955</span>
+<span class="co">#&gt; Specificity            0.9664   0.9141   0.9204</span>
+<span class="co">#&gt; Pos Pred Value         0.9344   0.7800   0.8696</span>
+<span class="co">#&gt; Neg Pred Value         0.9664   0.9000   0.9369</span>
+<span class="co">#&gt; Prevalence             0.3389   0.2889   0.3722</span>
+<span class="co">#&gt; Detection Rate         0.3167   0.2167   0.3333</span>
+<span class="co">#&gt; Detection Prevalence   0.3389   0.2778   0.3833</span>
+<span class="co">#&gt; Balanced Accuracy      0.9504   0.8320   0.9079</span>
 <span class="va">saida</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit_FGNB</span>, <span class="va">test</span>, type <span class="op">=</span> <span class="st">"matrix"</span><span class="op">)</span>
 
 <span class="co"># -----</span>
@@ -247,32 +247,32 @@ Um dos classificadores, foi uma nova abordagem do algoritmo **Naive Bayes** que 
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Reference</span>
 <span class="co">#&gt; Prediction  1  2  3</span>
-<span class="co">#&gt;          1 62  0  0</span>
-<span class="co">#&gt;          2  6 46  8</span>
-<span class="co">#&gt;          3  0 11 47</span>
+<span class="co">#&gt;          1 57  4  0</span>
+<span class="co">#&gt;          2  5 38  7</span>
+<span class="co">#&gt;          3  0 10 59</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Overall Statistics</span>
 <span class="co">#&gt;                                           </span>
-<span class="co">#&gt;                Accuracy : 0.8611          </span>
-<span class="co">#&gt;                  95% CI : (0.8018, 0.9081)</span>
-<span class="co">#&gt;     No Information Rate : 0.3778          </span>
+<span class="co">#&gt;                Accuracy : 0.8556          </span>
+<span class="co">#&gt;                  95% CI : (0.7956, 0.9034)</span>
+<span class="co">#&gt;     No Information Rate : 0.3667          </span>
 <span class="co">#&gt;     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       </span>
 <span class="co">#&gt;                                           </span>
-<span class="co">#&gt;                   Kappa : 0.7914          </span>
+<span class="co">#&gt;                   Kappa : 0.782           </span>
 <span class="co">#&gt;                                           </span>
 <span class="co">#&gt;  Mcnemar's Test P-Value : NA              </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Statistics by Class:</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                      Class: 1 Class: 2 Class: 3</span>
-<span class="co">#&gt; Sensitivity            0.9118   0.8070   0.8545</span>
-<span class="co">#&gt; Specificity            1.0000   0.8862   0.9120</span>
-<span class="co">#&gt; Pos Pred Value         1.0000   0.7667   0.8103</span>
-<span class="co">#&gt; Neg Pred Value         0.9492   0.9083   0.9344</span>
-<span class="co">#&gt; Prevalence             0.3778   0.3167   0.3056</span>
-<span class="co">#&gt; Detection Rate         0.3444   0.2556   0.2611</span>
-<span class="co">#&gt; Detection Prevalence   0.3444   0.3333   0.3222</span>
-<span class="co">#&gt; Balanced Accuracy      0.9559   0.8466   0.8833</span>
+<span class="co">#&gt; Sensitivity            0.9194   0.7308   0.8939</span>
+<span class="co">#&gt; Specificity            0.9661   0.9062   0.9123</span>
+<span class="co">#&gt; Pos Pred Value         0.9344   0.7600   0.8551</span>
+<span class="co">#&gt; Neg Pred Value         0.9580   0.8923   0.9369</span>
+<span class="co">#&gt; Prevalence             0.3444   0.2889   0.3667</span>
+<span class="co">#&gt; Detection Rate         0.3167   0.2111   0.3278</span>
+<span class="co">#&gt; Detection Prevalence   0.3389   0.2778   0.3833</span>
+<span class="co">#&gt; Balanced Accuracy      0.9427   0.8185   0.9031</span>
 <span class="va">saida</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit_GNB</span>, <span class="va">test</span>, type <span class="op">=</span> <span class="st">"matrix"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="fuzzy-naive-bayes-triangular" class="section level4">
@@ -295,32 +295,32 @@ Um dos classificadores, foi uma nova abordagem do algoritmo **Naive Bayes** que 
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Reference</span>
 <span class="co">#&gt; Prediction  1  2  3</span>
-<span class="co">#&gt;          1 61  1  0</span>
-<span class="co">#&gt;          2  5 50  5</span>
-<span class="co">#&gt;          3  0 13 45</span>
+<span class="co">#&gt;          1 54  7  0</span>
+<span class="co">#&gt;          2  2 25 23</span>
+<span class="co">#&gt;          3  0  1 68</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Overall Statistics</span>
 <span class="co">#&gt;                                           </span>
-<span class="co">#&gt;                Accuracy : 0.8667          </span>
-<span class="co">#&gt;                  95% CI : (0.8081, 0.9127)</span>
-<span class="co">#&gt;     No Information Rate : 0.3667          </span>
+<span class="co">#&gt;                Accuracy : 0.8167          </span>
+<span class="co">#&gt;                  95% CI : (0.7523, 0.8703)</span>
+<span class="co">#&gt;     No Information Rate : 0.5056          </span>
 <span class="co">#&gt;     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       </span>
 <span class="co">#&gt;                                           </span>
-<span class="co">#&gt;                   Kappa : 0.7997          </span>
+<span class="co">#&gt;                   Kappa : 0.7179          </span>
 <span class="co">#&gt;                                           </span>
 <span class="co">#&gt;  Mcnemar's Test P-Value : NA              </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Statistics by Class:</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                      Class: 1 Class: 2 Class: 3</span>
-<span class="co">#&gt; Sensitivity            0.9242   0.7812   0.9000</span>
-<span class="co">#&gt; Specificity            0.9912   0.9138   0.9000</span>
-<span class="co">#&gt; Pos Pred Value         0.9839   0.8333   0.7759</span>
-<span class="co">#&gt; Neg Pred Value         0.9576   0.8833   0.9590</span>
-<span class="co">#&gt; Prevalence             0.3667   0.3556   0.2778</span>
-<span class="co">#&gt; Detection Rate         0.3389   0.2778   0.2500</span>
-<span class="co">#&gt; Detection Prevalence   0.3444   0.3333   0.3222</span>
-<span class="co">#&gt; Balanced Accuracy      0.9577   0.8475   0.9000</span>
+<span class="co">#&gt; Sensitivity            0.9643   0.7576   0.7473</span>
+<span class="co">#&gt; Specificity            0.9435   0.8299   0.9888</span>
+<span class="co">#&gt; Pos Pred Value         0.8852   0.5000   0.9855</span>
+<span class="co">#&gt; Neg Pred Value         0.9832   0.9385   0.7928</span>
+<span class="co">#&gt; Prevalence             0.3111   0.1833   0.5056</span>
+<span class="co">#&gt; Detection Rate         0.3000   0.1389   0.3778</span>
+<span class="co">#&gt; Detection Prevalence   0.3389   0.2778   0.3833</span>
+<span class="co">#&gt; Balanced Accuracy      0.9539   0.7938   0.8680</span>
 <span class="va">saida</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit_FNBT</span>, <span class="va">test</span>, type <span class="op">=</span> <span class="st">"matrix"</span><span class="op">)</span>
 
 <span class="co"># ----------------</span>
@@ -340,15 +340,15 @@ Um dos classificadores, foi uma nova abordagem do algoritmo **Naive Bayes** que 
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Reference</span>
 <span class="co">#&gt; Prediction  1  2  3</span>
-<span class="co">#&gt;          1 62  0  0</span>
-<span class="co">#&gt;          2  5 50  5</span>
-<span class="co">#&gt;          3  0 14 44</span>
+<span class="co">#&gt;          1 57  4  0</span>
+<span class="co">#&gt;          2  4 42  4</span>
+<span class="co">#&gt;          3  0 12 57</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Overall Statistics</span>
 <span class="co">#&gt;                                           </span>
 <span class="co">#&gt;                Accuracy : 0.8667          </span>
 <span class="co">#&gt;                  95% CI : (0.8081, 0.9127)</span>
-<span class="co">#&gt;     No Information Rate : 0.3722          </span>
+<span class="co">#&gt;     No Information Rate : 0.3389          </span>
 <span class="co">#&gt;     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       </span>
 <span class="co">#&gt;                                           </span>
 <span class="co">#&gt;                   Kappa : 0.7997          </span>
@@ -358,14 +358,14 @@ Um dos classificadores, foi uma nova abordagem do algoritmo **Naive Bayes** que 
 <span class="co">#&gt; Statistics by Class:</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                      Class: 1 Class: 2 Class: 3</span>
-<span class="co">#&gt; Sensitivity            0.9254   0.7812   0.8980</span>
-<span class="co">#&gt; Specificity            1.0000   0.9138   0.8931</span>
-<span class="co">#&gt; Pos Pred Value         1.0000   0.8333   0.7586</span>
-<span class="co">#&gt; Neg Pred Value         0.9576   0.8833   0.9590</span>
-<span class="co">#&gt; Prevalence             0.3722   0.3556   0.2722</span>
-<span class="co">#&gt; Detection Rate         0.3444   0.2778   0.2444</span>
-<span class="co">#&gt; Detection Prevalence   0.3444   0.3333   0.3222</span>
-<span class="co">#&gt; Balanced Accuracy      0.9627   0.8475   0.8955</span>
+<span class="co">#&gt; Sensitivity            0.9344   0.7241   0.9344</span>
+<span class="co">#&gt; Specificity            0.9664   0.9344   0.8992</span>
+<span class="co">#&gt; Pos Pred Value         0.9344   0.8400   0.8261</span>
+<span class="co">#&gt; Neg Pred Value         0.9664   0.8769   0.9640</span>
+<span class="co">#&gt; Prevalence             0.3389   0.3222   0.3389</span>
+<span class="co">#&gt; Detection Rate         0.3167   0.2333   0.3167</span>
+<span class="co">#&gt; Detection Prevalence   0.3389   0.2778   0.3833</span>
+<span class="co">#&gt; Balanced Accuracy      0.9504   0.8293   0.9168</span>
 <span class="va">saida</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit_NBT</span>, <span class="va">test</span>, type <span class="op">=</span> <span class="st">"matrix"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="fuzzy-naive-bayes-trapezoidal" class="section level4">
@@ -387,32 +387,32 @@ Um dos classificadores, foi uma nova abordagem do algoritmo **Naive Bayes** que 
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Reference</span>
 <span class="co">#&gt; Prediction  1  2  3</span>
-<span class="co">#&gt;          1 58  4  0</span>
-<span class="co">#&gt;          2  3 49  8</span>
-<span class="co">#&gt;          3  0 12 46</span>
+<span class="co">#&gt;          1 53  8  0</span>
+<span class="co">#&gt;          2  3 37 10</span>
+<span class="co">#&gt;          3  2  8 59</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Overall Statistics</span>
 <span class="co">#&gt;                                           </span>
-<span class="co">#&gt;                Accuracy : 0.85            </span>
-<span class="co">#&gt;                  95% CI : (0.7893, 0.8988)</span>
-<span class="co">#&gt;     No Information Rate : 0.3611          </span>
-<span class="co">#&gt;     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       </span>
+<span class="co">#&gt;                Accuracy : 0.8278          </span>
+<span class="co">#&gt;                  95% CI : (0.7645, 0.8799)</span>
+<span class="co">#&gt;     No Information Rate : 0.3833          </span>
+<span class="co">#&gt;     P-Value [Acc &gt; NIR] : &lt;2e-16          </span>
 <span class="co">#&gt;                                           </span>
-<span class="co">#&gt;                   Kappa : 0.7749          </span>
+<span class="co">#&gt;                   Kappa : 0.7399          </span>
 <span class="co">#&gt;                                           </span>
-<span class="co">#&gt;  Mcnemar's Test P-Value : NA              </span>
+<span class="co">#&gt;  Mcnemar's Test P-Value : 0.2127          </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Statistics by Class:</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                      Class: 1 Class: 2 Class: 3</span>
-<span class="co">#&gt; Sensitivity            0.9508   0.7538   0.8519</span>
-<span class="co">#&gt; Specificity            0.9664   0.9043   0.9048</span>
-<span class="co">#&gt; Pos Pred Value         0.9355   0.8167   0.7931</span>
-<span class="co">#&gt; Neg Pred Value         0.9746   0.8667   0.9344</span>
-<span class="co">#&gt; Prevalence             0.3389   0.3611   0.3000</span>
-<span class="co">#&gt; Detection Rate         0.3222   0.2722   0.2556</span>
-<span class="co">#&gt; Detection Prevalence   0.3444   0.3333   0.3222</span>
-<span class="co">#&gt; Balanced Accuracy      0.9586   0.8291   0.8783</span>
+<span class="co">#&gt; Sensitivity            0.9138   0.6981   0.8551</span>
+<span class="co">#&gt; Specificity            0.9344   0.8976   0.9099</span>
+<span class="co">#&gt; Pos Pred Value         0.8689   0.7400   0.8551</span>
+<span class="co">#&gt; Neg Pred Value         0.9580   0.8769   0.9099</span>
+<span class="co">#&gt; Prevalence             0.3222   0.2944   0.3833</span>
+<span class="co">#&gt; Detection Rate         0.2944   0.2056   0.3278</span>
+<span class="co">#&gt; Detection Prevalence   0.3389   0.2778   0.3833</span>
+<span class="co">#&gt; Balanced Accuracy      0.9241   0.7979   0.8825</span>
 <span class="va">saida</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit_FNBT</span>, <span class="va">test</span>, type <span class="op">=</span> <span class="st">"matrix"</span><span class="op">)</span>
 
 <span class="co"># ----------------</span>
@@ -432,32 +432,32 @@ Um dos classificadores, foi uma nova abordagem do algoritmo **Naive Bayes** que 
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Reference</span>
 <span class="co">#&gt; Prediction  1  2  3</span>
-<span class="co">#&gt;          1 55  7  0</span>
-<span class="co">#&gt;          2  2 49  9</span>
-<span class="co">#&gt;          3  0 12 46</span>
+<span class="co">#&gt;          1 53  8  0</span>
+<span class="co">#&gt;          2  3 32 15</span>
+<span class="co">#&gt;          3  2  8 59</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Overall Statistics</span>
-<span class="co">#&gt;                                           </span>
-<span class="co">#&gt;                Accuracy : 0.8333          </span>
-<span class="co">#&gt;                  95% CI : (0.7707, 0.8846)</span>
-<span class="co">#&gt;     No Information Rate : 0.3778          </span>
-<span class="co">#&gt;     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       </span>
-<span class="co">#&gt;                                           </span>
-<span class="co">#&gt;                   Kappa : 0.75            </span>
-<span class="co">#&gt;                                           </span>
-<span class="co">#&gt;  Mcnemar's Test P-Value : NA              </span>
+<span class="co">#&gt;                                          </span>
+<span class="co">#&gt;                Accuracy : 0.8            </span>
+<span class="co">#&gt;                  95% CI : (0.734, 0.8558)</span>
+<span class="co">#&gt;     No Information Rate : 0.4111         </span>
+<span class="co">#&gt;     P-Value [Acc &gt; NIR] : &lt; 2e-16        </span>
+<span class="co">#&gt;                                          </span>
+<span class="co">#&gt;                   Kappa : 0.6966         </span>
+<span class="co">#&gt;                                          </span>
+<span class="co">#&gt;  Mcnemar's Test P-Value : 0.09356        </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Statistics by Class:</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                      Class: 1 Class: 2 Class: 3</span>
-<span class="co">#&gt; Sensitivity            0.9649   0.7206   0.8364</span>
-<span class="co">#&gt; Specificity            0.9431   0.9018   0.9040</span>
-<span class="co">#&gt; Pos Pred Value         0.8871   0.8167   0.7931</span>
-<span class="co">#&gt; Neg Pred Value         0.9831   0.8417   0.9262</span>
-<span class="co">#&gt; Prevalence             0.3167   0.3778   0.3056</span>
-<span class="co">#&gt; Detection Rate         0.3056   0.2722   0.2556</span>
-<span class="co">#&gt; Detection Prevalence   0.3444   0.3333   0.3222</span>
-<span class="co">#&gt; Balanced Accuracy      0.9540   0.8112   0.8702</span>
+<span class="co">#&gt; Sensitivity            0.9138   0.6667   0.7973</span>
+<span class="co">#&gt; Specificity            0.9344   0.8636   0.9057</span>
+<span class="co">#&gt; Pos Pred Value         0.8689   0.6400   0.8551</span>
+<span class="co">#&gt; Neg Pred Value         0.9580   0.8769   0.8649</span>
+<span class="co">#&gt; Prevalence             0.3222   0.2667   0.4111</span>
+<span class="co">#&gt; Detection Rate         0.2944   0.1778   0.3278</span>
+<span class="co">#&gt; Detection Prevalence   0.3389   0.2778   0.3833</span>
+<span class="co">#&gt; Balanced Accuracy      0.9241   0.7652   0.8515</span>
 <span class="va">saida</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit_NBT</span>, <span class="va">test</span>, type <span class="op">=</span> <span class="st">"matrix"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="fuzzy-exponential-naive-bayes-classifier" class="section level4">
@@ -481,41 +481,41 @@ Um dos classificadores, foi uma nova abordagem do algoritmo **Naive Bayes** que 
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Reference</span>
 <span class="co">#&gt; Prediction  1  2  3</span>
-<span class="co">#&gt;          1 59  3  0</span>
-<span class="co">#&gt;          2  5 45 10</span>
-<span class="co">#&gt;          3  0 10 48</span>
+<span class="co">#&gt;          1 52  9  0</span>
+<span class="co">#&gt;          2  4 39  7</span>
+<span class="co">#&gt;          3  0  8 61</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Overall Statistics</span>
 <span class="co">#&gt;                                           </span>
 <span class="co">#&gt;                Accuracy : 0.8444          </span>
 <span class="co">#&gt;                  95% CI : (0.7831, 0.8941)</span>
-<span class="co">#&gt;     No Information Rate : 0.3556          </span>
+<span class="co">#&gt;     No Information Rate : 0.3778          </span>
 <span class="co">#&gt;     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       </span>
 <span class="co">#&gt;                                           </span>
-<span class="co">#&gt;                   Kappa : 0.7665          </span>
+<span class="co">#&gt;                   Kappa : 0.7655          </span>
 <span class="co">#&gt;                                           </span>
 <span class="co">#&gt;  Mcnemar's Test P-Value : NA              </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Statistics by Class:</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                      Class: 1 Class: 2 Class: 3</span>
-<span class="co">#&gt; Sensitivity            0.9219   0.7759   0.8276</span>
-<span class="co">#&gt; Specificity            0.9741   0.8770   0.9180</span>
-<span class="co">#&gt; Pos Pred Value         0.9516   0.7500   0.8276</span>
-<span class="co">#&gt; Neg Pred Value         0.9576   0.8917   0.9180</span>
-<span class="co">#&gt; Prevalence             0.3556   0.3222   0.3222</span>
-<span class="co">#&gt; Detection Rate         0.3278   0.2500   0.2667</span>
-<span class="co">#&gt; Detection Prevalence   0.3444   0.3333   0.3222</span>
-<span class="co">#&gt; Balanced Accuracy      0.9480   0.8265   0.8728</span>
+<span class="co">#&gt; Sensitivity            0.9286   0.6964   0.8971</span>
+<span class="co">#&gt; Specificity            0.9274   0.9113   0.9286</span>
+<span class="co">#&gt; Pos Pred Value         0.8525   0.7800   0.8841</span>
+<span class="co">#&gt; Neg Pred Value         0.9664   0.8692   0.9369</span>
+<span class="co">#&gt; Prevalence             0.3111   0.3111   0.3778</span>
+<span class="co">#&gt; Detection Rate         0.2889   0.2167   0.3389</span>
+<span class="co">#&gt; Detection Prevalence   0.3389   0.2778   0.3833</span>
+<span class="co">#&gt; Balanced Accuracy      0.9280   0.8039   0.9128</span>
 <span class="va">saida</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit_FENB</span>, <span class="va">test</span>, type <span class="op">=</span> <span class="st">"matrix"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">saida</span><span class="op">)</span>
 <span class="co">#&gt;                  1         2         3</span>
-<span class="co">#&gt; result.1 -3.070606 -3.163347 -3.350327</span>
-<span class="co">#&gt; result.2 -2.859784 -3.078579 -3.331659</span>
-<span class="co">#&gt; result.3 -2.706656 -3.043789 -3.326055</span>
-<span class="co">#&gt; result.4 -2.827007 -3.094829 -3.327058</span>
-<span class="co">#&gt; result.5 -2.651204 -3.037289 -3.326225</span>
-<span class="co">#&gt; result.6 -3.063400 -3.092308 -3.331840</span></code></pre></div>
+<span class="co">#&gt; result.1 -3.070158 -3.170582 -3.341755</span>
+<span class="co">#&gt; result.2 -3.062776 -3.274319 -3.404448</span>
+<span class="co">#&gt; result.3 -2.582074 -3.037449 -3.315749</span>
+<span class="co">#&gt; result.4 -2.967027 -3.109698 -3.330948</span>
+<span class="co">#&gt; result.5 -2.947663 -3.092281 -3.324113</span>
+<span class="co">#&gt; result.6 -3.117808 -3.125445 -3.334274</span></code></pre></div>
 </div>
 <div id="fuzzy-gamma-naive-bayes-classifier" class="section level4">
 <h4 class="hasAnchor">
@@ -537,9 +537,9 @@ Um dos classificadores, foi uma nova abordagem do algoritmo **Naive Bayes** que 
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Reference</span>
 <span class="co">#&gt; Prediction  1  2  3</span>
-<span class="co">#&gt;          1 62  0  0</span>
-<span class="co">#&gt;          2 30 30  0</span>
-<span class="co">#&gt;          3  1 57  0</span>
+<span class="co">#&gt;          1 61  0  0</span>
+<span class="co">#&gt;          2 22 28  0</span>
+<span class="co">#&gt;          3  1 65  3</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Overall Statistics</span>
 <span class="co">#&gt;                                           </span>
@@ -548,30 +548,86 @@ Um dos classificadores, foi uma nova abordagem do algoritmo **Naive Bayes** que 
 <span class="co">#&gt;     No Information Rate : 0.5167          </span>
 <span class="co">#&gt;     P-Value [Acc &gt; NIR] : 0.5888          </span>
 <span class="co">#&gt;                                           </span>
-<span class="co">#&gt;                   Kappa : 0.2603          </span>
+<span class="co">#&gt;                   Kappa : 0.2935          </span>
 <span class="co">#&gt;                                           </span>
 <span class="co">#&gt;  Mcnemar's Test P-Value : &lt;2e-16          </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Statistics by Class:</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                      Class: 1 Class: 2 Class: 3</span>
-<span class="co">#&gt; Sensitivity            0.6667   0.3448       NA</span>
-<span class="co">#&gt; Specificity            1.0000   0.6774   0.6778</span>
-<span class="co">#&gt; Pos Pred Value         1.0000   0.5000       NA</span>
-<span class="co">#&gt; Neg Pred Value         0.7373   0.5250       NA</span>
-<span class="co">#&gt; Prevalence             0.5167   0.4833   0.0000</span>
-<span class="co">#&gt; Detection Rate         0.3444   0.1667   0.0000</span>
-<span class="co">#&gt; Detection Prevalence   0.3444   0.3333   0.3222</span>
-<span class="co">#&gt; Balanced Accuracy      0.8333   0.5111       NA</span>
+<span class="co">#&gt; Sensitivity            0.7262   0.3011  1.00000</span>
+<span class="co">#&gt; Specificity            1.0000   0.7471  0.62712</span>
+<span class="co">#&gt; Pos Pred Value         1.0000   0.5600  0.04348</span>
+<span class="co">#&gt; Neg Pred Value         0.8067   0.5000  1.00000</span>
+<span class="co">#&gt; Prevalence             0.4667   0.5167  0.01667</span>
+<span class="co">#&gt; Detection Rate         0.3389   0.1556  0.01667</span>
+<span class="co">#&gt; Detection Prevalence   0.3389   0.2778  0.38333</span>
+<span class="co">#&gt; Balanced Accuracy      0.8631   0.5241  0.81356</span>
 <span class="va">saida</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit_NBT</span>, <span class="va">test</span>, type <span class="op">=</span> <span class="st">"matrix"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">saida</span><span class="op">)</span>
 <span class="co">#&gt;                     1            2            3</span>
-<span class="co">#&gt; result.1 1.132299e-08 3.581647e-12 1.378423e-22</span>
-<span class="co">#&gt; result.2 4.406396e-09 3.020695e-13 6.335280e-24</span>
-<span class="co">#&gt; result.3 1.181174e-09 7.374546e-15 5.311058e-26</span>
-<span class="co">#&gt; result.4 2.289231e-09 7.885329e-19 1.646001e-36</span>
-<span class="co">#&gt; result.5 1.390556e-09 1.024705e-15 7.987331e-28</span>
-<span class="co">#&gt; result.6 2.878129e-10 2.345254e-13 6.595527e-22</span></code></pre></div>
+<span class="co">#&gt; result.1 5.523584e-09 6.534319e-14 6.807468e-21</span>
+<span class="co">#&gt; result.2 2.325655e-09 1.137082e-14 2.202915e-22</span>
+<span class="co">#&gt; result.3 2.463579e-09 4.906552e-20 1.848882e-30</span>
+<span class="co">#&gt; result.4 4.607821e-09 1.979129e-14 1.706810e-21</span>
+<span class="co">#&gt; result.5 1.052613e-09 6.400612e-15 2.334398e-21</span>
+<span class="co">#&gt; result.6 7.892581e-10 6.726475e-14 2.351434e-19</span></code></pre></div>
+</div>
+<div id="fuzzy-exponential-naive-bayes-classifier-1" class="section level4">
+<h4 class="hasAnchor">
+<a href="#fuzzy-exponential-naive-bayes-classifier-1" class="anchor"></a>Fuzzy Exponential Naive Bayes Classifier</h4>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fit_NBE</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/FuzzyExponentialNaiveBayes.html">FuzzyExponentialNaiveBayes</a></span><span class="op">(</span>train <span class="op">=</span>  <span class="va">Train</span><span class="op">[</span>,<span class="op">-</span><span class="fl">4</span><span class="op">]</span>,
+                                    cl <span class="op">=</span> <span class="va">Train</span><span class="op">[</span>,<span class="fl">4</span><span class="op">]</span>, cores <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+                              
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">fit_NBE</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Fuzzy Exponential Naive Bayes Classifier for Discrete Predictors</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Class:</span>
+<span class="co">#&gt; NULL</span>
+<span class="va">saida</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit_NBE</span>, <span class="va">test</span><span class="op">)</span>
+<span class="va">saida</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">saida</span>,levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">Test</span><span class="op">[</span>,<span class="fl">4</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/caret/man/confusionMatrix.html">confusionMatrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">Test</span><span class="op">[</span>,<span class="fl">4</span><span class="op">]</span><span class="op">)</span>, <span class="va">saida</span><span class="op">)</span>
+<span class="co">#&gt; Confusion Matrix and Statistics</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;           Reference</span>
+<span class="co">#&gt; Prediction  1  2  3</span>
+<span class="co">#&gt;          1  1 19 41</span>
+<span class="co">#&gt;          2  1 13 36</span>
+<span class="co">#&gt;          3  1 11 57</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Overall Statistics</span>
+<span class="co">#&gt;                                           </span>
+<span class="co">#&gt;                Accuracy : 0.3944          </span>
+<span class="co">#&gt;                  95% CI : (0.3225, 0.4699)</span>
+<span class="co">#&gt;     No Information Rate : 0.7444          </span>
+<span class="co">#&gt;     P-Value [Acc &gt; NIR] : 1               </span>
+<span class="co">#&gt;                                           </span>
+<span class="co">#&gt;                   Kappa : 0.0577          </span>
+<span class="co">#&gt;                                           </span>
+<span class="co">#&gt;  Mcnemar's Test P-Value : 1.398e-14       </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Statistics by Class:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;                      Class: 1 Class: 2 Class: 3</span>
+<span class="co">#&gt; Sensitivity          0.333333  0.30233   0.4254</span>
+<span class="co">#&gt; Specificity          0.661017  0.72993   0.7391</span>
+<span class="co">#&gt; Pos Pred Value       0.016393  0.26000   0.8261</span>
+<span class="co">#&gt; Neg Pred Value       0.983193  0.76923   0.3063</span>
+<span class="co">#&gt; Prevalence           0.016667  0.23889   0.7444</span>
+<span class="co">#&gt; Detection Rate       0.005556  0.07222   0.3167</span>
+<span class="co">#&gt; Detection Prevalence 0.338889  0.27778   0.3833</span>
+<span class="co">#&gt; Balanced Accuracy    0.497175  0.51613   0.5823</span>
+<span class="va">saida</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit_NBT</span>, <span class="va">test</span>, type <span class="op">=</span> <span class="st">"matrix"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">saida</span><span class="op">)</span>
+<span class="co">#&gt;                     1            2            3</span>
+<span class="co">#&gt; result.1 5.523584e-09 6.534319e-14 6.807468e-21</span>
+<span class="co">#&gt; result.2 2.325655e-09 1.137082e-14 2.202915e-22</span>
+<span class="co">#&gt; result.3 2.463579e-09 4.906552e-20 1.848882e-30</span>
+<span class="co">#&gt; result.4 4.607821e-09 1.979129e-14 1.706810e-21</span>
+<span class="co">#&gt; result.5 1.052613e-09 6.400612e-15 2.334398e-21</span>
+<span class="co">#&gt; result.6 7.892581e-10 6.726475e-14 2.351434e-19</span></code></pre></div>
 </div>
 </div>
 </div>
