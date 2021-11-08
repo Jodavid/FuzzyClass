@@ -2,7 +2,7 @@
 % Please edit documentation in R/ExpNBFuzzyParam.R
 \name{ExpNBFuzzyParam}
 \alias{ExpNBFuzzyParam}
-\title{Fuzzy Exponential Naive Bayes Classifier}
+\title{Fuzzy Exponential Naive Bayes Classifier with Fuzzy parameters}
 \usage{
 ExpNBFuzzyParam(train, cl, metd = 1, cores = 2)
 }
@@ -19,7 +19,7 @@ ExpNBFuzzyParam(train, cl, metd = 1, cores = 2)
 A vector of classifications
 }
 \description{
-\code{ExpNBFuzzyParam} Fuzzy Exponential Naive Bayes Classifier
+\code{ExpNBFuzzyParam} Fuzzy Exponential Naive Bayes Classifier with Fuzzy parameters
 }
 \examples{
 
@@ -27,22 +27,23 @@ set.seed(1) # determining a seed
 data(VirtualRealityData)
 
 # Splitting into Training and Testing
-split <- caTools::sample.split(t(VirtualRealityData[,1]), SplitRatio = 0.7)
+split <- caTools::sample.split(t(VirtualRealityData[, 1]), SplitRatio = 0.7)
 Train <- subset(VirtualRealityData, split == "TRUE")
 Test <- subset(VirtualRealityData, split == "FALSE")
 
 # ----------------
 # matrix or data frame of test set cases.
 # A vector will be interpreted as a row vector for a single case.
-test = Test[,-4]
-fit_FENB <- ExpNBFuzzyParam(train =  Train[,-4],
-                                    cl = Train[,4], metd = 1, cores = 2)
+test <- Test[, -4]
+fit_FENB <- ExpNBFuzzyParam(
+  train = Train[, -4],
+  cl = Train[, 4], metd = 1, cores = 2
+)
 
 pred_FENB <- predict(fit_FENB, test)
 
 head(pred_FENB)
-head(Test[,4])
-
+head(Test[, 4])
 }
 \references{
 \insertRef{rodrigues2016new}{FuzzyClass}

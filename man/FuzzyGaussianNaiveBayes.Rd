@@ -27,21 +27,22 @@ set.seed(1) # determining a seed
 data(iris)
 
 # Splitting into Training and Testing
-split <- caTools::sample.split(t(iris[,1]), SplitRatio = 0.7)
+split <- caTools::sample.split(t(iris[, 1]), SplitRatio = 0.7)
 Train <- subset(iris, split == "TRUE")
 Test <- subset(iris, split == "FALSE")
 # ----------------
 # matrix or data frame of test set cases.
 # A vector will be interpreted as a row vector for a single case.
-test = Test[,-5]
-fit_GNB <- FuzzyGaussianNaiveBayes(train =  Train[,-5],
-                                    cl = Train[,5], cores = 2)
+test <- Test[, -5]
+fit_GNB <- FuzzyGaussianNaiveBayes(
+  train = Train[, -5],
+  cl = Train[, 5], cores = 2
+)
 
 pred_GNB <- predict(fit_GNB, test)
 
 head(pred_GNB)
-head(Test[,5])
-
+head(Test[, 5])
 }
 \references{
 \insertRef{marcos2012online}{FuzzyClass}

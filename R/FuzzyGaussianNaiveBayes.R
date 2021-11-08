@@ -40,37 +40,39 @@
 #' data(iris)
 #'
 #' # Splitting into Training and Testing
-#' split <- caTools::sample.split(t(iris[,1]), SplitRatio = 0.7)
+#' split <- caTools::sample.split(t(iris[, 1]), SplitRatio = 0.7)
 #' Train <- subset(iris, split == "TRUE")
 #' Test <- subset(iris, split == "FALSE")
 #' # ----------------
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
-#' test = Test[,-5]
-#' fit_GNB <- FuzzyGaussianNaiveBayes(train =  Train[,-5],
-#'                                     cl = Train[,5], cores = 2)
+#' test <- Test[, -5]
+#' fit_GNB <- FuzzyGaussianNaiveBayes(
+#'   train = Train[, -5],
+#'   cl = Train[, 5], cores = 2
+#' )
 #'
 #' pred_GNB <- predict(fit_GNB, test)
 #'
 #' head(pred_GNB)
-#' head(Test[,5])
-#'
+#' head(Test[, 5])
 #' @importFrom stats cov dnorm qchisq qnorm
 #' @importFrom foreach '%dopar%'
 #' @importFrom Rdpack reprompt
 #'
 #' @export
-FuzzyGaussianNaiveBayes <- function( train, cl, cores = 2, fuzzy = T)
+FuzzyGaussianNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
   UseMethod("FuzzyGaussianNaiveBayes")
+}
 
 #' @export
-FuzzyGaussianNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = TRUE){
+FuzzyGaussianNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = TRUE) {
 
   # --------------------------------------------------------
   # Estimating class parameters
   cols <- ncol(train) # Number of variables
-  dados <- train; # training data matrix
-  M <- cl; # true classes
+  dados <- train # training data matrix
+  M <- cl # true classes
   # -------------------------------
   N <- nrow(dados) # Number of observations
   # -------------------------------
@@ -91,115 +93,111 @@ FuzzyGaussianNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = TRUE)
   # -----------------------------
   class <- length(unique(M))
   names_class <- unique(M)
-  sizes <- table(factor(M))#sapply(1:class, function(x) sum(M==x)) # Quantas observações em cada classe
-  Sturges <- round(1+ 3.3*log10(sizes)) # Sturges
+  sizes <- table(factor(M)) # sapply(1:class, function(x) sum(M==x)) # Quantas observações em cada classe
+  Sturges <- round(1 + 3.3 * log10(sizes)) # Sturges
   # -----------------------------
   # Minimo de cada classe para cada variável
   # Linhas classes, colunas variáveis
-  minimo <- lapply(1:class, function(j){
-    sapply(1:cols, function(i){
-      min(dados[M==names_class[j],i])
+  minimo <- lapply(1:class, function(j) {
+    sapply(1:cols, function(i) {
+      min(dados[M == names_class[j], i])
     })
   })
   # -----------------------------
   # Máximo de cada classe para cada variável
   # Linhas classes, colunas variáveis
-  maximo <- lapply(1:class, function(j){
-    sapply(1:cols, function(i){
-      max(dados[M==names_class[j],i])
+  maximo <- lapply(1:class, function(j) {
+    sapply(1:cols, function(i) {
+      max(dados[M == names_class[j], i])
     })
   })
   # -----------------------------
-  AT_classe <- lapply(1:class, function(i) maximo[[i]]-minimo[[i]])
+  AT_classe <- lapply(1:class, function(i) maximo[[i]] - minimo[[i]])
   # -----------------------------
-  Comprim_Intervalo = lapply(1:class, function(i) AT_classe[[i]]/Sturges[i])
+  Comprim_Intervalo <- lapply(1:class, function(i) AT_classe[[i]] / Sturges[i])
   # --------------------------------------------------------
   # Lista dentro Lista, dimensões
-  Freq <- lapply(1:class, function(i){
-
-    array(0,dim = Sturges)
-
+  Freq <- lapply(1:class, function(i) {
+    array(0, dim = Sturges)
   })
   # ----------------------
 
   # Loop nos dados por classe [CRIAR]
 
-  Pertinencias <- lapply(1:length(unique(M)), function(i){
-
-    dados2 <- dados[M==names_class[i],]
+  Pertinencias <- lapply(1:length(unique(M)), function(i) {
+    dados2 <- dados[M == names_class[i], ]
     # laco nas observações de cada grupo
-    for(t in 1:nrow(dados2)){
-      x <- dados2[t,] # Observacao
+    for (t in 1:nrow(dados2)) {
+      x <- dados2[t, ] # Observacao
 
-      saida <- floor((x-minimo[[i]])/Comprim_Intervalo[[i]]) + 1
+      saida <- floor((x - minimo[[i]]) / Comprim_Intervalo[[i]]) + 1
       # ---
       aux <- (saida > Sturges[i])
-      aux <- which(aux==T)
-      if(length(aux)>0) saida[aux] <- saida[aux]-1
+      aux <- which(aux == T)
+      if (length(aux) > 0) saida[aux] <- saida[aux] - 1
       # ---
       # Encontrando posição de aumentar uma frequencia
-      res <- 0;
+      res <- 0
       tamanho_saida <- length(saida)
-      if(tamanho_saida > 1 ){
-        for(j in tamanho_saida:2) res <- res + (saida[j]-1)*(Sturges[i]^(j-1))
+      if (tamanho_saida > 1) {
+        for (j in tamanho_saida:2) res <- res + (saida[j] - 1) * (Sturges[i]^(j - 1))
       }
       res <- res + saida[1]
       # ---
       # ---
-      Freq[[i]][as.numeric(res)] = Freq[[i]][as.numeric(res)] +1
+      Freq[[i]][as.numeric(res)] <- Freq[[i]][as.numeric(res)] + 1
       # ---
       Freq[[i]][is.na(Freq[[i]])] <- 0
     }
     # Fim do for
 
 
-    Pertinencia <- Freq[[i]]/sizes[i]
+    Pertinencia <- Freq[[i]] / sizes[i]
 
     return(Pertinencia)
-
   })
   # --------------------------------------------------------
   # Finding Mu and Sigma for each class
-  medias <- lapply(1:length(unique(M)), function(i) colMeans( subset( dados, M == unique(M)[i] ) ) )
-  varian <- lapply(1:length(unique(M)), function(i) diag( diag( cov( subset( dados, M==unique(M)[i] ) ) ), (cols), (cols) ) )
+  medias <- lapply(1:length(unique(M)), function(i) colMeans(subset(dados, M == unique(M)[i])))
+  varian <- lapply(1:length(unique(M)), function(i) diag(diag(cov(subset(dados, M == unique(M)[i]))), (cols), (cols)))
   # --------------------------------------------------------
   # Probabilidade a priori das classes - consideradas iguais
-  pk <- rep(1/class,class)
+  pk <- rep(1 / class, class)
   # -----------------------
-  logaritmo <-  log(pk);
-  log_determinante <- lapply(1:length(unique(M)), function(i) 0.5*log(det(varian[[i]])))
+  logaritmo <- log(pk)
+  log_determinante <- lapply(1:length(unique(M)), function(i) 0.5 * log(det(varian[[i]])))
   inversa_covar <- lapply(1:length(unique(M)), function(i) MASS::ginv(varian[[i]]))
   # -----------------------
 
- # -------------------------------------------------------
-  structure(list( minimo = minimo,
-                  maximo = maximo,
-                  Comprim_Intervalo = Comprim_Intervalo,
-                  fuzzy = fuzzy,
-                  Sturges = Sturges,
-                  Pertinencias = Pertinencias,
-                  log_determinante = log_determinante,
-                  logaritmo = logaritmo,
-                  inversa_covar = inversa_covar,
-                  medias = medias,
-                  cols = cols,
-                  M = M,
-                  cores = cores
-                 ),
-            class = "FuzzyGaussianNaiveBayes")
-
+  # -------------------------------------------------------
+  structure(list(
+    minimo = minimo,
+    maximo = maximo,
+    Comprim_Intervalo = Comprim_Intervalo,
+    fuzzy = fuzzy,
+    Sturges = Sturges,
+    Pertinencias = Pertinencias,
+    log_determinante = log_determinante,
+    logaritmo = logaritmo,
+    inversa_covar = inversa_covar,
+    medias = medias,
+    cols = cols,
+    M = M,
+    cores = cores
+  ),
+  class = "FuzzyGaussianNaiveBayes"
+  )
 }
 # -------------------------
 
 
 #' @export
-print.FuzzyGaussianNaiveBayes <- function(x, ...){
-
-  if(x$fuzzy == T){
+print.FuzzyGaussianNaiveBayes <- function(x, ...) {
+  if (x$fuzzy == T) {
     # -----------------
     cat("\nFuzzy Gaussian Naive Bayes Classifier for Discrete Predictors Zadeh-based\n\n")
     # -----------------
-  }else{
+  } else {
     # -----------------
     cat("\nGaussian Naive Bayes Classifier for Discrete Predictors\n\n")
     # -----------------
@@ -214,25 +212,25 @@ print.FuzzyGaussianNaiveBayes <- function(x, ...){
 #' @export
 predict.FuzzyGaussianNaiveBayes <- function(object,
                                             newdata,
-                                       type = "class",
-                                            ...){
+                                            type = "class",
+                                            ...) {
   # --------------------------------------------------------
-  #type <- match.arg("class")
+  # type <- match.arg("class")
   test <- as.data.frame(newdata)
   # --------------------------------------------------------
-  minimo = object$minimo
-  maximo = object$maximo
-  Comprim_Intervalo = object$Comprim_Intervalo
-  Sturges = object$Sturges
-  log_determinante = object$log_determinante
-  logaritmo = object$logaritmo
-  Pertinencias = object$Pertinencias
-  inversa_covar = object$inversa_covar
-  medias = object$medias
-  cols = object$cols
-  M = object$M
-  cores = object$cores
-  fuzzy = object$fuzzy
+  minimo <- object$minimo
+  maximo <- object$maximo
+  Comprim_Intervalo <- object$Comprim_Intervalo
+  Sturges <- object$Sturges
+  log_determinante <- object$log_determinante
+  logaritmo <- object$logaritmo
+  Pertinencias <- object$Pertinencias
+  inversa_covar <- object$inversa_covar
+  medias <- object$medias
+  cols <- object$cols
+  M <- object$M
+  cores <- object$cores
+  fuzzy <- object$fuzzy
   # --------------------------------------------------------
 
   # --------------------------------------------------------
@@ -245,48 +243,47 @@ predict.FuzzyGaussianNaiveBayes <- function(object,
   doParallel::registerDoParallel(core)
   # --------------
   # loop start
-  R_M_obs <- foreach::foreach(h=1:N_test,.combine = rbind) %dopar% {
+  R_M_obs <- foreach::foreach(h = 1:N_test, .combine = rbind) %dopar% {
     # ------------
-    x <- test[h,]
+    x <- test[h, ]
     # ------------
-    R_M <- lapply(1:length(unique(M)), function(i){
-
-      saida <- abs( floor((x - minimo[[i]])/Comprim_Intervalo[[i]]) + 1)
+    R_M <- lapply(1:length(unique(M)), function(i) {
+      saida <- abs(floor((x - minimo[[i]]) / Comprim_Intervalo[[i]]) + 1)
       # ---
       aux1 <- x < minimo[[i]]
       aux2 <- x > maximo[[i]]
       # ---
-      log_Pertinencia = ifelse((T %in% aux1) | (T %in% aux2), -50, 0 )
+      log_Pertinencia <- ifelse((T %in% aux1) | (T %in% aux2), -50, 0)
       # ---
       # ---
       # Encontrando posição de aumentar uma frequencia
-      res <- 0;
+      res <- 0
       tamanho_saida <- length(saida)
-      if(tamanho_saida > 1 ){
-        for(j in tamanho_saida:2) res <- res + (saida[j]-1)*(Sturges[i]^(j-1))
+      if (tamanho_saida > 1) {
+        for (j in tamanho_saida:2) res <- res + (saida[j] - 1) * (Sturges[i]^(j - 1))
       }
       res <- abs(res + saida[1])
       # ---
       # ---
-      if(log_Pertinencia == -50){
-        pert <- ifelse(is.na(Pertinencias[[i]][as.numeric(res)])==T, 0,  Pertinencias[[i]][as.numeric(res)] )
-        log_Pertinencia = ifelse(pert <= 0, -50, log(Pertinencias[[i]][as.numeric(res)]) )
+      if (log_Pertinencia == -50) {
+        pert <- ifelse(is.na(Pertinencias[[i]][as.numeric(res)]) == T, 0, Pertinencias[[i]][as.numeric(res)])
+        log_Pertinencia <- ifelse(pert <= 0, -50, log(Pertinencias[[i]][as.numeric(res)]))
       }
 
-      if(fuzzy == T){
+      if (fuzzy == T) {
         # --------------
-        f <- log_Pertinencia + logaritmo[i] - log_determinante[[i]] - 0.5*as.numeric(x - medias[[i]] )%*%inversa_covar[[i]]%*%as.numeric(x - medias[[i]] )
+        f <- log_Pertinencia + logaritmo[i] - log_determinante[[i]] - 0.5 * as.numeric(x - medias[[i]]) %*% inversa_covar[[i]] %*% as.numeric(x - medias[[i]])
         # --------------
-      }else{
+      } else {
         # --------------
-        f <- logaritmo[i] - log_determinante[[i]] - 0.5*as.numeric(x - medias[[i]] )%*%inversa_covar[[i]]%*%as.numeric(x - medias[[i]] )
+        f <- logaritmo[i] - log_determinante[[i]] - 0.5 * as.numeric(x - medias[[i]]) %*% inversa_covar[[i]] %*% as.numeric(x - medias[[i]])
         # --------------
       }
 
       return(f)
     })
     # --------------------------------------------------------
-    #R_M_class <- which.max(produto)
+    # R_M_class <- which.max(produto)
     R_M_class <- R_M
     # --------------------------------------------------------
     return(R_M_class)
@@ -295,18 +292,16 @@ predict.FuzzyGaussianNaiveBayes <- function(object,
   # -------------------------
   parallel::stopCluster(core)
   # ---------
-  if(type == "class"){
+  if (type == "class") {
     # -------------------------
-    R_M_obs <- sapply(1:nrow(R_M_obs), function(i) which.max(R_M_obs[i,]) )
+    R_M_obs <- sapply(1:nrow(R_M_obs), function(i) which.max(R_M_obs[i, ]))
     resultado <- unique(M)[R_M_obs]
     return(as.factor(c(resultado)))
     # -------------------------
-  }else{
+  } else {
     # -------------------------
     colnames(R_M_obs) <- unique(M)
     return(R_M_obs)
     # -------------------------
   }
-
-
 }

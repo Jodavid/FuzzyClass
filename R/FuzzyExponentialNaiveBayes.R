@@ -1,7 +1,7 @@
 # --------------------------------------------------
-#             Fuzzy Naive Bayes Triangular
+#             Fuzzy Exponential Naive Bayes
 #
-# data: 10.10.2021
+# data: 08.11.2021
 # version: 0.1
 # author: ..., Ronei Moraes
 # adaptado por: Jodavid Ferreira;
@@ -13,13 +13,12 @@
 # parallel: to makeCluster function
 # doSNOW: to registerDoSnow function
 # foreach: to `%dopar%` function
+# MASS: to fitdistr
 # -------------------
 
-# -----------------------------------------------
-#      Fuzzy Naive Bayes Triangular Classifier
-# -----------------------------------------------
-
-#' \code{FuzzyTriangularNaiveBayes} Naive Bayes Trianglar Classifier
+#' Fuzzy Exponential Naive Bayes
+#'
+#' \code{FuzzyExponentialNaiveBayes} Fuzzy Exponential Naive Bayes
 #'
 #'
 #' @param train matrix or data frame of training set cases.
@@ -30,7 +29,7 @@
 #' @return A vector of classifications
 #'
 #' @references
-#' \insertRef{de2020online}{FuzzyClass}
+#' \insertRef{de2018fuzzy}{FuzzyClass}
 #'
 #' @examples
 #'
@@ -45,7 +44,7 @@
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
 #' test <- Test[, -5]
-#' fit_NBT <- FuzzyTriangularNaiveBayes(
+#' fit_NBT <- FuzzyExponentialNaiveBayes(
 #'   train = Train[, -5],
 #'   cl = Train[, 5], cores = 2
 #' )
@@ -54,52 +53,45 @@
 #'
 #' head(pred_NBT)
 #' head(Test[, 5])
+#' @importFrom stats dexp
+#'
 #' @export
-FuzzyTriangularNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
-  UseMethod("FuzzyTriangularNaiveBayes")
+FuzzyExponentialNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
+  UseMethod("FuzzyExponentialNaiveBayes")
 }
 
 #' @export
-FuzzyTriangularNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
+FuzzyExponentialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
 
   # --------------------------------------------------------
   # Estimating class parameters
   cols <- ncol(train) # Number of variables
   dados <- train # training data matrix
   M <- cl # true classes
-  # intervalos = 10 # Division to memberships
   # --------------------------------------------------------
-  # # --------------------------------------------------------
-  # # Estimating class memberships
-  # pertinicesC <- lapply(1:length(unique(M)), function(i){
-  #   lapply(1:cols, function(j){
-  #     SubSet <- dados[M==unique(M)[i],j]
-  #     getMembershipsTrapezoidal(SubSet, intervalos)
-  #   })
-  # })
-  # # --------------------------------------------------------
 
   # --------------------------------------------------------
-  # Estimating Triangular Parameters
+  # Estimating Gamma Parameters
   parametersC <- lapply(1:length(unique(M)), function(i) {
-    SubSet <- dados[M == unique(M)[i], ]
-    getParametersTriangular(SubSet)
+    lapply(1:cols, function(j) {
+      SubSet <- dados[M == unique(M)[i], j]
+      param <- 1 / mean(SubSet, na.rm = TRUE)
+      return(param)
+    })
   })
   # --------------------------------------------------------
 
   # --------------------------------------------------------
-  # Admitindo que a distribuicao estatistica do vetor de dados, dadas as classes sejam
-  # Triangulares T(a,b,m) e usando a mesma estrutura do Classificador Bayesiano.
+  # Admitindo que a distribuicao estatistica do vetor de dados, dadas as classes sejam Gamas,
+  # pode-se usar a mesma estrutura de maxima verossimilhanca do Classificador Bayesiano.
   # Assim, temos que:
   #
-  # p(wi\Xk) = (2*(Xk-a)/((b-a)(m-a))), se a <= Xk <= m
-  #          = (2*(b-Xk)/((b-a)(b-m))), se m <= Xk <= b
+  # ln p(wi\Xk) = ln (p(wi)) + SUM_k [ ln (mu_wi(Xk)) + Xk * ln(lambda_ki) - lambda_ki - ln (Xk !) ]
   #
-  #---
   # Geracao das funcoes de pertinencias por histograma de frequencias:
   # - Calcular os valores maximo e minimo de cada dimensao
   # - Aplicar a forma de Sturges para gerar os intervalos
-  #   Sturges = arredonda(raiz(N))
+  #   Sturges = 1+ 3.3*log10(N)
   # - Encontrar as frequencias para cada combinacao dos dados
   # - Armazenar essas frequencias em uma matriz multimensional
   #
@@ -179,21 +171,21 @@ FuzzyTriangularNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
     pk = pk,
     fuzzy = fuzzy
   ),
-  class = "FuzzyTriangularNaiveBayes"
+  class = "FuzzyExponentialNaiveBayes"
   )
 }
 # -------------------------
 
 
 #' @export
-print.FuzzyTriangularNaiveBayes <- function(x, ...) {
+print.FuzzyExponentialNaiveBayes <- function(x, ...) {
   if (x$fuzzy == T) {
     # -----------------
-    cat("\nFuzzy Naive Bayes Triangular Classifier for Discrete Predictors\n\n")
+    cat("\nFuzzy Exponential Naive Bayes Classifier for Discrete Predictors\n\n")
     # -----------------
   } else {
     # -----------------
-    cat("\nNaive Bayes Triangular Classifier for Discrete Predictors\n\n")
+    cat("\nNaive Exponential  Bayes Classifier for Discrete Predictors\n\n")
     # -----------------
   }
   cat("Class:\n")
@@ -202,10 +194,10 @@ print.FuzzyTriangularNaiveBayes <- function(x, ...) {
 }
 
 #' @export
-predict.FuzzyTriangularNaiveBayes <- function(object,
-                                              newdata,
-                                              type = "class",
-                                              ...) {
+predict.FuzzyExponentialNaiveBayes <- function(object,
+                                               newdata,
+                                               type = "class",
+                                               ...) {
   # --------------------------------------------------------
   # type <- match.arg("class")
   test <- as.data.frame(newdata)
@@ -227,7 +219,7 @@ predict.FuzzyTriangularNaiveBayes <- function(object,
   # --------------
   P <- lapply(1:length(unique(M)), function(i) {
     densidades <- sapply(1:cols, function(j) {
-      EnvStats::dtri(test[, j], min = parametersC[[i]][1, j], max = parametersC[[i]][2, j], mode = parametersC[[i]][3, j])
+      stats::rexp(test[, j], rate = parametersC[[i]][[j]][1])
     })
     densidades <- apply(densidades, 1, prod)
     # Calcula a P(w_i) * P(X_k | w_i)

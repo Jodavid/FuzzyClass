@@ -39,45 +39,47 @@
 #' data(iris)
 #'
 #' # Splitting into Training and Testing
-#' split <- caTools::sample.split(t(iris[,1]), SplitRatio = 0.7)
+#' split <- caTools::sample.split(t(iris[, 1]), SplitRatio = 0.7)
 #' Train <- subset(iris, split == "TRUE")
 #' Test <- subset(iris, split == "FALSE")
 #' # ----------------
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
-#' test = Test[,-5]
-#' fit_NBT <- FuzzyGammaNaiveBayes(train =  Train[,-5],
-#'                                     cl = Train[,5], cores = 2)
+#' test <- Test[, -5]
+#' fit_NBT <- FuzzyGammaNaiveBayes(
+#'   train = Train[, -5],
+#'   cl = Train[, 5], cores = 2
+#' )
 #'
 #' pred_NBT <- predict(fit_NBT, test)
 #'
 #' head(pred_NBT)
-#' head(Test[,5])
-#'
+#' head(Test[, 5])
 #' @importFrom stats dgamma
 #'
 #' @export
-FuzzyGammaNaiveBayes <- function( train, cl, cores = 2, fuzzy = T)
+FuzzyGammaNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
   UseMethod("FuzzyGammaNaiveBayes")
+}
 
 #' @export
-FuzzyGammaNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = T){
+FuzzyGammaNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
 
   # --------------------------------------------------------
   # Estimating class parameters
   cols <- ncol(train) # Number of variables
-  dados <- train; # training data matrix
-  M <- cl; # true classes
+  dados <- train # training data matrix
+  M <- cl # true classes
   # --------------------------------------------------------
 
   # --------------------------------------------------------
   # Estimating Gamma Parameters
-  parametersC <- lapply(1:length(unique(M)), function(i){
-    lapply(1:cols, function(j){
-      #print(c(i,j))
-        SubSet <- dados[M==unique(M)[i],j]
-        param <- MASS::fitdistr(SubSet, "gamma",  lower = 0.001,upper = max(SubSet)+1e-2)$estimate
-        return(param)
+  parametersC <- lapply(1:length(unique(M)), function(i) {
+    lapply(1:cols, function(j) {
+      # print(c(i,j))
+      SubSet <- dados[M == unique(M)[i], j]
+      param <- MASS::fitdistr(SubSet, "gamma", lower = 0.001, upper = max(SubSet) + 1e-2)$estimate
+      return(param)
     })
   })
   # --------------------------------------------------------
@@ -98,50 +100,50 @@ FuzzyGammaNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = T){
   #
   # --------------------------------------------------------
   # Sturges
-  Sturges <- lapply(1:length(unique(M)), function(i){
-    SubSet <- dados[M==unique(M)[i],]
-    return( round(sqrt(nrow(SubSet)))  )
+  Sturges <- lapply(1:length(unique(M)), function(i) {
+    SubSet <- dados[M == unique(M)[i], ]
+    return(round(sqrt(nrow(SubSet))))
   })
 
   # --------------------------------------------------------
   # Comprimento do Intervalo
-  Comprim_Intervalo <-lapply(1:length(unique(M)), function(i){
-    SubSet <- dados[M==unique(M)[i],]
+  Comprim_Intervalo <- lapply(1:length(unique(M)), function(i) {
+    SubSet <- dados[M == unique(M)[i], ]
     # (Min - Max) / Sturges -- Por variável
-    comp <- ( apply(SubSet,2,max) - apply(SubSet,2,min) ) /  Sturges[[i]]
+    comp <- (apply(SubSet, 2, max) - apply(SubSet, 2, min)) / Sturges[[i]]
   })
   # --------------------------------------------------------
 
   # --------------------------------------------------------
-  Freq <- lapply(1:length(unique(M)), function(i){
-    ara <- array(0,dim = c(Sturges[[i]],cols))
-    return( ara )
+  Freq <- lapply(1:length(unique(M)), function(i) {
+    ara <- array(0, dim = c(Sturges[[i]], cols))
+    return(ara)
   })
   # ---------------
-  minimos <- lapply(1:length(unique(M)), function(i){
-    sapply(1:cols,function(j){
-      SubSet <- dados[M==unique(M)[i],];
-      return(min(SubSet[,j]))
+  minimos <- lapply(1:length(unique(M)), function(i) {
+    sapply(1:cols, function(j) {
+      SubSet <- dados[M == unique(M)[i], ]
+      return(min(SubSet[, j]))
     })
   })
   # ---------------
-  for(classe in 1:length(unique(M))){
+  for (classe in 1:length(unique(M))) {
     # --
-    SubSet <- dados[M==unique(M)[classe],]
+    SubSet <- dados[M == unique(M)[classe], ]
     # --
-    for( coluna  in 1:cols){                                    # coluna da classe
-      for( linhaClasse in 1:nrow(SubSet)){                               # linha da classe
-        faixa <- minimos[[classe]][coluna] + Comprim_Intervalo[[classe]][coluna];           # faixa de frequencia inicial
-        for(linhaFreq in 1:Sturges[[classe]]){                                      # linha da Freq
-          if ( SubSet[linhaClasse,coluna] < faixa ){                       # ve se valor da classe pertence aaquela faixa
-            Freq[[classe]][linhaFreq,coluna] = Freq[[classe]][linhaFreq,coluna] + 1;    # acumula valor na faixa de frequencia e interrompe este ultimo for
-            break;
+    for (coluna in 1:cols) { # coluna da classe
+      for (linhaClasse in 1:nrow(SubSet)) { # linha da classe
+        faixa <- minimos[[classe]][coluna] + Comprim_Intervalo[[classe]][coluna] # faixa de frequencia inicial
+        for (linhaFreq in 1:Sturges[[classe]]) { # linha da Freq
+          if (SubSet[linhaClasse, coluna] < faixa) { # ve se valor da classe pertence aaquela faixa
+            Freq[[classe]][linhaFreq, coluna] <- Freq[[classe]][linhaFreq, coluna] + 1 # acumula valor na faixa de frequencia e interrompe este ultimo for
+            break
           }
-          if ( linhaFreq == Sturges[[classe]] && SubSet[linhaClasse,coluna] >=faixa ){
-            Freq[[classe]][linhaFreq,coluna] = Freq[[classe]][linhaFreq,coluna] + 1;
-            break;
+          if (linhaFreq == Sturges[[classe]] && SubSet[linhaClasse, coluna] >= faixa) {
+            Freq[[classe]][linhaFreq, coluna] <- Freq[[classe]][linhaFreq, coluna] + 1
+            break
           }
-          faixa <- faixa + Comprim_Intervalo[[classe]][coluna];                  # troca de faixa -> proxima
+          faixa <- faixa + Comprim_Intervalo[[classe]][coluna] # troca de faixa -> proxima
         }
       }
     }
@@ -150,41 +152,41 @@ FuzzyGammaNaiveBayes.default <- function( train, cl, cores = 2, fuzzy = T){
 
   # --------------------------------------------------------
   # Cria a funcao de pertinencia para cada classe, a partir das frequencias relativas
-  Pertinencia <- lapply(1:length(unique(M)), function(i){
-    Freq[[i]]/nrow( dados[M==unique(M)[i],] )
+  Pertinencia <- lapply(1:length(unique(M)), function(i) {
+    Freq[[i]] / nrow(dados[M == unique(M)[i], ])
   })
   # ------
   # Probabilidade a priori das classes - consideradas iguais
-  pk <- rep(1/length(unique(M)), length(unique(M)))
+  pk <- rep(1 / length(unique(M)), length(unique(M)))
   # -------------------------------------------------------
 
 
   # -------------------------------------------------------
-  structure(list(parametersC = parametersC,
-                 minimos = minimos,
-                 cols = cols,
-                 M = M,
-                 cores = cores,
-                 Comprim_Intervalo = Comprim_Intervalo,
-                 Pertinencia = Pertinencia,
-                 Sturges = Sturges,
-                 pk = pk,
-                 fuzzy = fuzzy
+  structure(list(
+    parametersC = parametersC,
+    minimos = minimos,
+    cols = cols,
+    M = M,
+    cores = cores,
+    Comprim_Intervalo = Comprim_Intervalo,
+    Pertinencia = Pertinencia,
+    Sturges = Sturges,
+    pk = pk,
+    fuzzy = fuzzy
   ),
-  class = "FuzzyGammaNaiveBayes")
-
+  class = "FuzzyGammaNaiveBayes"
+  )
 }
 # -------------------------
 
 
 #' @export
-print.FuzzyGammaNaiveBayes <- function(x, ...){
-
-  if(x$fuzzy == T){
+print.FuzzyGammaNaiveBayes <- function(x, ...) {
+  if (x$fuzzy == T) {
     # -----------------
     cat("\nFuzzy Gamma Naive Bayes Classifier for Discrete Predictors\n\n")
     # -----------------
-  }else{
+  } else {
     # -----------------
     cat("\nNaive Gamma  Bayes Classifier for Discrete Predictors\n\n")
     # -----------------
@@ -196,35 +198,35 @@ print.FuzzyGammaNaiveBayes <- function(x, ...){
 
 #' @export
 predict.FuzzyGammaNaiveBayes <- function(object,
-                            newdata,
-                            type = "class",
-                            ...){
+                                         newdata,
+                                         type = "class",
+                                         ...) {
   # --------------------------------------------------------
-  #type <- match.arg("class")
+  # type <- match.arg("class")
   test <- as.data.frame(newdata)
   # --------------------------------------------------------
-  parametersC = object$parametersC
-  minimos = object$minimos
-  cols = object$cols
-  M = object$M
-  cores = object$cores
-  Comprim_Intervalo = object$Comprim_Intervalo
-  Pertinencia = object$Pertinencia
-  Sturges = object$Sturges
-  pk  = object$pk
-  fuzzy = object$fuzzy
+  parametersC <- object$parametersC
+  minimos <- object$minimos
+  cols <- object$cols
+  M <- object$M
+  cores <- object$cores
+  Comprim_Intervalo <- object$Comprim_Intervalo
+  Pertinencia <- object$Pertinencia
+  Sturges <- object$Sturges
+  pk <- object$pk
+  fuzzy <- object$fuzzy
   # --------------------------------------------------------
 
   # --------------------------------------------------------
   # Classification
   # --------------
-  P <- lapply(1:length(unique(M)), function(i){
-    densidades <- sapply(1:cols, function(j){
-      stats::dgamma(test[,j], shape = parametersC[[i]][[j]][1], scale = parametersC[[i]][[j]][2])
+  P <- lapply(1:length(unique(M)), function(i) {
+    densidades <- sapply(1:cols, function(j) {
+      stats::dgamma(test[, j], shape = parametersC[[i]][[j]][1], scale = parametersC[[i]][[j]][2])
     })
     densidades <- apply(densidades, 1, prod)
     # Calcula a P(w_i) * P(X_k | w_i)
-    p <- pk[[i]]*densidades
+    p <- pk[[i]] * densidades
     # ---
     return(p)
   })
@@ -236,31 +238,31 @@ predict.FuzzyGammaNaiveBayes <- function(object,
   doParallel::registerDoParallel(core)
   # --------------
   # loop start
-  R_M_obs <- foreach::foreach(h=1:N_test,.combine = rbind) %dopar% {
+  R_M_obs <- foreach::foreach(h = 1:N_test, .combine = rbind) %dopar% {
 
     # ------------
-    x <- test[h,]
+    x <- test[h, ]
     # ------------
-    ACHOU_t =c();
-    ACHOU = 0;
+    ACHOU_t <- c()
+    ACHOU <- 0
 
-    if(fuzzy == T){
+    if (fuzzy == T) {
       # ---------------
-      for(classe in 1:length(unique(M))){
+      for (classe in 1:length(unique(M))) {
         # --
         # --
-        for( coluna  in 1:cols){                                    # coluna da classe
-          for( linhaF in 1:Sturges[[classe]]){                               # linha da classe
-            faixa <- minimos[[classe]][coluna] + Comprim_Intervalo[[classe]][coluna];           # faixa de frequencia inicial
-            if ( x[coluna] < faixa ){                       # ve se valor da classe pertence aaquela faixa
-              ACHOU[coluna] = Pertinencia[[classe]][linhaF,coluna];    # acumula valor na faixa de frequencia e interrompe este ultimo for
-              break;
+        for (coluna in 1:cols) { # coluna da classe
+          for (linhaF in 1:Sturges[[classe]]) { # linha da classe
+            faixa <- minimos[[classe]][coluna] + Comprim_Intervalo[[classe]][coluna] # faixa de frequencia inicial
+            if (x[coluna] < faixa) { # ve se valor da classe pertence aaquela faixa
+              ACHOU[coluna] <- Pertinencia[[classe]][linhaF, coluna] # acumula valor na faixa de frequencia e interrompe este ultimo for
+              break
             }
-            if ( linhaF == Sturges[[classe]] ){
-              ACHOU[coluna] = Pertinencia[[classe]][linhaF,coluna];
-              break;
+            if (linhaF == Sturges[[classe]]) {
+              ACHOU[coluna] <- Pertinencia[[classe]][linhaF, coluna]
+              break
             }
-            faixa <- faixa + Comprim_Intervalo[[classe]][coluna];                  # troca de faixa -> proxima
+            faixa <- faixa + Comprim_Intervalo[[classe]][coluna] # troca de faixa -> proxima
           }
         }
         # ---
@@ -270,40 +272,34 @@ predict.FuzzyGammaNaiveBayes <- function(object,
       # -----
       row.names(ACHOU_t) <- unique(M)
       # --------------------------------------------------------
-      ACHOU_t <- apply(ACHOU_t,1,prod)
+      ACHOU_t <- apply(ACHOU_t, 1, prod)
 
-      f <- sapply(1:length(unique(M)), function(i){
-        P[[i]][h]*ACHOU_t[i]
+      f <- sapply(1:length(unique(M)), function(i) {
+        P[[i]][h] * ACHOU_t[i]
       })
-
-    }else{
-
-      f <- sapply(1:length(unique(M)), function(i){
-        P[[i]][h]#*ACHOU_t[i]
+    } else {
+      f <- sapply(1:length(unique(M)), function(i) {
+        P[[i]][h] #* ACHOU_t[i]
       })
-
     }
     # -------------------------------------------------------
 
-    return(f);
-
+    return(f)
   }
   # ------------
   # -------------------------
   parallel::stopCluster(core)
   # ---------
-  if(type == "class"){
+  if (type == "class") {
     # -------------------------
-    R_M_obs <- sapply(1:nrow(R_M_obs), function(i) which.max(R_M_obs[i,]) )
+    R_M_obs <- sapply(1:nrow(R_M_obs), function(i) which.max(R_M_obs[i, ]))
     resultado <- unique(M)[R_M_obs]
     return(as.factor(c(resultado)))
     # -------------------------
-  }else{
+  } else {
     # -------------------------
     colnames(R_M_obs) <- unique(M)
     return(R_M_obs)
     # -------------------------
   }
-
-
 }
