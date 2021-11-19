@@ -69,9 +69,13 @@ GauNBFuzzyParam.default <- function(train, cl, metd = 1, cores = 2) {
 
   # --------------------------------------------------------
   # Estimating class parameters
+  train <- data.frame(train)
   cols <- ncol(train) # Number of variables
+  if(is.null(cols)){
+    cols <- 1
+  }
   dados <- train # training data matrix
-  M <- cl # true classes
+  M <- c(unlist(cl)) # true classes
   # --------------------------------------------------------
   # Finding Mu and Sigma for each class
   medias <- lapply(1:length(unique(M)), function(i) colMeans(subset(dados, M == unique(M)[i])))
@@ -258,6 +262,10 @@ predict.GauNBFuzzyParam <- function(object,
     # -------------------------
   } else {
     # -------------------------
+    Infpos <- which(R_M_obs==Inf)
+    R_M_obs[Infpos] <- .Machine$integer.max;
+    R_M_obs <- R_M_obs/rowSums(R_M_obs)
+    # ----------
     colnames(R_M_obs) <- unique(M)
     return(R_M_obs)
     # -------------------------
