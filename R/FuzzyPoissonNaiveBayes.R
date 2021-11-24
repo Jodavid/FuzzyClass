@@ -1,5 +1,5 @@
 # --------------------------------------------------
-#             Fuzzy Exponential Naive Bayes
+#             Fuzzy Poisson Naive Bayes
 #
 # data: 08.11.2021
 # version: 0.1
@@ -16,9 +16,9 @@
 # MASS: to fitdistr
 # -------------------
 
-#' Fuzzy Exponential Naive Bayes
+#' Fuzzy Poisson Naive Bayes
 #'
-#' \code{FuzzyExponentialNaiveBayes} Fuzzy Exponential Naive Bayes
+#' \code{FuzzyPoissonNaiveBayes} Fuzzy Poisson Naive Bayes
 #'
 #'
 #' @param train matrix or data frame of training set cases.
@@ -44,7 +44,7 @@
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
 #' test <- Test[, -5]
-#' fit_NBT <- FuzzyExponentialNaiveBayes(
+#' fit_NBT <- FuzzyPoissonNaiveBayes(
 #'   train = Train[, -5],
 #'   cl = Train[, 5], cores = 2
 #' )
@@ -53,15 +53,15 @@
 #'
 #' head(pred_NBT)
 #' head(Test[, 5])
-#' @importFrom stats dexp
+#' @importFrom stats dpois
 #'
 #' @export
-FuzzyExponentialNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
-  UseMethod("FuzzyExponentialNaiveBayes")
+FuzzyPoissonNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
+  UseMethod("FuzzyPoissonNaiveBayes")
 }
 
 #' @export
-FuzzyExponentialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
+FuzzyPoissonNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
 
   # --------------------------------------------------------
   # Estimating class parameters
@@ -79,7 +79,7 @@ FuzzyExponentialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) 
   parametersC <- lapply(1:length(unique(M)), function(i) {
     lapply(1:cols, function(j) {
       SubSet <- dados[M == unique(M)[i], j]
-      param <- 1 / mean(SubSet, na.rm = TRUE)
+      param <- mean(SubSet, na.rm = TRUE)
       return(param)
     })
   })
@@ -175,21 +175,21 @@ FuzzyExponentialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) 
     pk = pk,
     fuzzy = fuzzy
   ),
-  class = "FuzzyExponentialNaiveBayes"
+  class = "FuzzyPoissonNaiveBayes"
   )
 }
 # -------------------------
 
 
 #' @export
-print.FuzzyExponentialNaiveBayes <- function(x, ...) {
+print.FuzzyPoissonNaiveBayes <- function(x, ...) {
   if (x$fuzzy == T) {
     # -----------------
-    cat("\nFuzzy Exponential Naive Bayes Classifier for Discrete Predictors\n\n")
+    cat("\nFuzzy Poisson Naive Bayes Classifier for Discrete Predictors\n\n")
     # -----------------
   } else {
     # -----------------
-    cat("\nNaive Exponential  Bayes Classifier for Discrete Predictors\n\n")
+    cat("\nNaive Poisson  Bayes Classifier for Discrete Predictors\n\n")
     # -----------------
   }
   cat("Class:\n")
@@ -198,7 +198,7 @@ print.FuzzyExponentialNaiveBayes <- function(x, ...) {
 }
 
 #' @export
-predict.FuzzyExponentialNaiveBayes <- function(object,
+predict.FuzzyPoissonNaiveBayes <- function(object,
                                                newdata,
                                                type = "class",
                                                ...) {
@@ -223,7 +223,7 @@ predict.FuzzyExponentialNaiveBayes <- function(object,
   # --------------
   P <- lapply(1:length(unique(M)), function(i) {
     densidades <- sapply(1:cols, function(j) {
-      stats::dexp(test[, j], rate = parametersC[[i]][[j]][1])
+      stats::dpois(test[, j], lambda = parametersC[[i]][[j]][1])
     })
     densidades <- apply(densidades, 1, prod)
     # Calcula a P(w_i) * P(X_k | w_i)

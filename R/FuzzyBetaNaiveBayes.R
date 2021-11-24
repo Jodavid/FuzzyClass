@@ -1,7 +1,7 @@
 # --------------------------------------------------
-#             Fuzzy Exponential Naive Bayes
+#             Fuzzy Gama Naive Bayes
 #
-# data: 08.11.2021
+# data: 01.11.2021
 # version: 0.1
 # author: ..., Ronei Moraes
 # adaptado por: Jodavid Ferreira;
@@ -16,9 +16,11 @@
 # MASS: to fitdistr
 # -------------------
 
-#' Fuzzy Exponential Naive Bayes
-#'
-#' \code{FuzzyExponentialNaiveBayes} Fuzzy Exponential Naive Bayes
+# -----------------------------------------------
+#      Fuzzy Naive Bayes Beta Classifier
+# -----------------------------------------------
+
+#' \code{FuzzyBetaNaiveBayes} Fuzzy Beta Naive Bayes
 #'
 #'
 #' @param train matrix or data frame of training set cases.
@@ -44,7 +46,7 @@
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
 #' test <- Test[, -5]
-#' fit_NBT <- FuzzyExponentialNaiveBayes(
+#' fit_NBT <- FuzzyBetaNaiveBayes(
 #'   train = Train[, -5],
 #'   cl = Train[, 5], cores = 2
 #' )
@@ -53,15 +55,15 @@
 #'
 #' head(pred_NBT)
 #' head(Test[, 5])
-#' @importFrom stats dexp
+#' @importFrom stats dbeta
 #'
 #' @export
-FuzzyExponentialNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
-  UseMethod("FuzzyExponentialNaiveBayes")
+FuzzyBetaNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
+  UseMethod("FuzzyBetaNaiveBayes")
 }
 
 #' @export
-FuzzyExponentialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
+FuzzyBetaNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
 
   # --------------------------------------------------------
   # Estimating class parameters
@@ -73,13 +75,17 @@ FuzzyExponentialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) 
   dados <- train # training data matrix
   M <- c(unlist(cl)) # true classes
   # --------------------------------------------------------
-
+  for(j in 1:cols){
+    dados[, j] <- dados[, j] / (max(dados[, j])+1e-2)
+  }
   # --------------------------------------------------------
-  # Estimating Gamma Parameters
+  # Estimating Beta Parameters
   parametersC <- lapply(1:length(unique(M)), function(i) {
     lapply(1:cols, function(j) {
+      #print(c(i,j))
       SubSet <- dados[M == unique(M)[i], j]
-      param <- 1 / mean(SubSet, na.rm = TRUE)
+      #SubSet <- SubSet/(max(SubSet)+1e-2)
+      param <- MASS::fitdistr(SubSet, "beta", start = list(shape1 = 1, shape2 = 1), lower = c(0.001,0.001), upper = c(10,10))$estimate#max(SubSet) + 1e-2)$estimate
       return(param)
     })
   })
@@ -175,21 +181,21 @@ FuzzyExponentialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) 
     pk = pk,
     fuzzy = fuzzy
   ),
-  class = "FuzzyExponentialNaiveBayes"
+  class = "FuzzyBetaNaiveBayes"
   )
 }
 # -------------------------
 
 
 #' @export
-print.FuzzyExponentialNaiveBayes <- function(x, ...) {
+print.FuzzyBetaNaiveBayes <- function(x, ...) {
   if (x$fuzzy == T) {
     # -----------------
-    cat("\nFuzzy Exponential Naive Bayes Classifier for Discrete Predictors\n\n")
+    cat("\nFuzzy Beta Naive Bayes Classifier for Discrete Predictors\n\n")
     # -----------------
   } else {
     # -----------------
-    cat("\nNaive Exponential  Bayes Classifier for Discrete Predictors\n\n")
+    cat("\nNaive Beta  Bayes Classifier for Discrete Predictors\n\n")
     # -----------------
   }
   cat("Class:\n")
@@ -198,10 +204,10 @@ print.FuzzyExponentialNaiveBayes <- function(x, ...) {
 }
 
 #' @export
-predict.FuzzyExponentialNaiveBayes <- function(object,
-                                               newdata,
-                                               type = "class",
-                                               ...) {
+predict.FuzzyBetaNaiveBayes <- function(object,
+                                         newdata,
+                                         type = "class",
+                                         ...) {
   # --------------------------------------------------------
   # type <- match.arg("class")
   test <- as.data.frame(newdata)
@@ -217,13 +223,15 @@ predict.FuzzyExponentialNaiveBayes <- function(object,
   pk <- object$pk
   fuzzy <- object$fuzzy
   # --------------------------------------------------------
-
+  for(j in 1:cols){
+    test[, j] <- test[, j] / (max(test[, j])+1e-2)
+  }
   # --------------------------------------------------------
   # Classification
   # --------------
   P <- lapply(1:length(unique(M)), function(i) {
     densidades <- sapply(1:cols, function(j) {
-      stats::dexp(test[, j], rate = parametersC[[i]][[j]][1])
+      stats::dbeta(test[, j], shape1 = parametersC[[i]][[j]][1], shape2 = parametersC[[i]][[j]][2])
     })
     densidades <- apply(densidades, 1, prod)
     # Calcula a P(w_i) * P(X_k | w_i)
