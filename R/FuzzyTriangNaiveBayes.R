@@ -231,7 +231,7 @@ predict.FuzzyTriangularNaiveBayes <- function(object,
   # --------------
   P <- lapply(1:length(unique(M)), function(i) {
     densidades <- sapply(1:cols, function(j) {
-      EnvStats::dtri(test[, j], min = parametersC[[i]][1, j], max = parametersC[[i]][2, j], mode = parametersC[[i]][3, j])
+      EnvStats::dtri(test[, j], min = parametersC[[i]][1, j], max = parametersC[[i]][2, j], mode = parametersC[[i]][3, j] + 1e-8)
     })
     densidades <- apply(densidades, 1, prod)
     # Calcula a P(w_i) * P(X_k | w_i)

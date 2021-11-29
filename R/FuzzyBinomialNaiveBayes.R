@@ -1,7 +1,7 @@
 # --------------------------------------------------
-#             Fuzzy Poisson Naive Bayes
+#             Fuzzy Binomial Naive Bayes
 #
-# data: 08.11.2021
+# data: 01.11.2021
 # version: 0.1
 # author: ..., Ronei Moraes
 # adaptado por: Jodavid Ferreira;
@@ -16,9 +16,8 @@
 # MASS: to fitdistr
 # -------------------
 
-#' Fuzzy Poisson Naive Bayes
-#'
-#' \code{FuzzyPoissonNaiveBayes} Fuzzy Poisson Naive Bayes
+
+#' \code{FuzzyBinomialNaiveBayes} Fuzzy Binomial Naive Bayes
 #'
 #'
 #' @param train matrix or data frame of training set cases.
@@ -29,7 +28,7 @@
 #' @return A vector of classifications
 #'
 #' @references
-#' \insertRef{moraes2015fuzzy}{FuzzyClass}
+#' \insertRef{moraes2016fuzzybinom}{FuzzyClass}
 #'
 #' @examples
 #'
@@ -44,7 +43,7 @@
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
 #' test <- Test[, -5]
-#' fit_NBT <- FuzzyPoissonNaiveBayes(
+#' fit_NBT <- FuzzyBinomialNaiveBayes(
 #'   train = Train[, -5],
 #'   cl = Train[, 5], cores = 2
 #' )
@@ -53,15 +52,23 @@
 #'
 #' head(pred_NBT)
 #' head(Test[, 5])
-#' @importFrom stats dpois
+#' @importFrom stats dbinom uniroot
 #'
 #' @export
-FuzzyPoissonNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
-  UseMethod("FuzzyPoissonNaiveBayes")
+FuzzyBinomialNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
+  UseMethod("FuzzyBinomialNaiveBayes")
 }
 
+# -------------------------------
+#' @noRd
+funcao_estimation_N <- function(n, x){
+  var(x)  - (mean(x)*(n-mean(x)))/n
+}
+# -------------------------------
+
+
 #' @export
-FuzzyPoissonNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
+FuzzyBinomialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
 
   # --------------------------------------------------------
   # Estimating class parameters
@@ -78,27 +85,19 @@ FuzzyPoissonNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
   # Estimating Gamma Parameters
   parametersC <- lapply(1:length(unique(M)), function(i) {
     lapply(1:cols, function(j) {
+      # print(c(i,j))
       SubSet <- dados[M == unique(M)[i], j]
-      param <- mean(SubSet, na.rm = TRUE)
+      # --
+      n <- uniroot(funcao_estimation_N, interval = c(0,100), x = SubSet)$root
+      p <- mean(SubSet)/n
+      # --
+      param <- c(n = round(n), p =p)
+      # --
       return(param)
     })
   })
   # --------------------------------------------------------
 
-  # --------------------------------------------------------
-  # Admitindo que a distribuicao estatistica do vetor de dados, dadas as classes sejam Gamas,
-  # pode-se usar a mesma estrutura de maxima verossimilhanca do Classificador Bayesiano.
-  # Assim, temos que:
-  #
-  # ln p(wi\Xk) = ln (p(wi)) + SUM_k [ ln (mu_wi(Xk)) + Xk * ln(lambda_ki) - lambda_ki - ln (Xk !) ]
-  #
-  # Geracao das funcoes de pertinencias por histograma de frequencias:
-  # - Calcular os valores maximo e minimo de cada dimensao
-  # - Aplicar a forma de Sturges para gerar os intervalos
-  #   Sturges = 1+ 3.3*log10(N)
-  # - Encontrar as frequencias para cada combinacao dos dados
-  # - Armazenar essas frequencias em uma matriz multimensional
-  #
   # --------------------------------------------------------
   # Sturges
   Sturges <- lapply(1:length(unique(M)), function(i) {
@@ -175,21 +174,21 @@ FuzzyPoissonNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
     pk = pk,
     fuzzy = fuzzy
   ),
-  class = "FuzzyPoissonNaiveBayes"
+  class = "FuzzyBinomialNaiveBayes"
   )
 }
 # -------------------------
 
 
 #' @export
-print.FuzzyPoissonNaiveBayes <- function(x, ...) {
+print.FuzzyBinomialNaiveBayes <- function(x, ...) {
   if (x$fuzzy == T) {
     # -----------------
-    cat("\nFuzzy Poisson Naive Bayes Classifier for Discrete Predictors\n\n")
+    cat("\nFuzzy Binomial Naive Bayes Classifier for Discrete Predictors\n\n")
     # -----------------
   } else {
     # -----------------
-    cat("\nNaive Poisson  Bayes Classifier for Discrete Predictors\n\n")
+    cat("\nNaive Binomial  Bayes Classifier for Discrete Predictors\n\n")
     # -----------------
   }
   cat("Class:\n")
@@ -198,10 +197,10 @@ print.FuzzyPoissonNaiveBayes <- function(x, ...) {
 }
 
 #' @export
-predict.FuzzyPoissonNaiveBayes <- function(object,
-                                               newdata,
-                                               type = "class",
-                                               ...) {
+predict.FuzzyBinomialNaiveBayes <- function(object,
+                                         newdata,
+                                         type = "class",
+                                         ...) {
   # --------------------------------------------------------
   # type <- match.arg("class")
   test <- as.data.frame(newdata)
@@ -223,7 +222,7 @@ predict.FuzzyPoissonNaiveBayes <- function(object,
   # --------------
   P <- lapply(1:length(unique(M)), function(i) {
     densidades <- sapply(1:cols, function(j) {
-      stats::dpois(test[, j], lambda = parametersC[[i]][[j]][1])
+      stats::dbinom(test[, j], size = parametersC[[i]][[j]][1], prob = parametersC[[i]][[j]][2])
     })
     densidades <- apply(densidades, 1, prod)
     # Calcula a P(w_i) * P(X_k | w_i)

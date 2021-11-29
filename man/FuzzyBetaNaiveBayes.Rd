@@ -45,5 +45,5 @@ head(pred_NBT)
 head(Test[, 5])
 }
 \references{
-\insertRef{de2018fuzzy}{FuzzyClass}
+\insertRef{de2020new}{FuzzyClass}
 }

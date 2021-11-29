@@ -31,7 +31,7 @@
 #' @return A vector of classifications
 #'
 #' @references
-#' \insertRef{de2018fuzzy}{FuzzyClass}
+#' \insertRef{de2020new}{FuzzyClass}
 #'
 #' @examples
 #'

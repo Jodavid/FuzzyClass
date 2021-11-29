@@ -29,7 +29,7 @@
 #' @return A vector of classifications
 #'
 #' @references
-#' \insertRef{de2018fuzzy}{FuzzyClass}
+#' \insertRef{moraes2016fuzzy}{FuzzyClass}
 #'
 #' @examples
 #'
