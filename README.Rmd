@@ -59,13 +59,8 @@ library(caret)
 #'
 #' Dados de treinamento real:
 data(VirtualRealityData)
-```
 
-#### Fuzzy Gaussian Naive Bayes com parâmetros Fuzzy
-
-```{r}
-# --------------------------------------------------
-# Fuzzy Gaussian Naive Bayes com parâmetros Fuzzy
+VirtualRealityData <- as.data.frame(VirtualRealityData)
 
 # Splitting into Training and Testing
 split <- caTools::sample.split(t(VirtualRealityData[,1]), SplitRatio = 0.7)
@@ -74,6 +69,15 @@ Test <- subset(VirtualRealityData, split == "FALSE")
 # ----------------
 
 test = Test[,-4]
+
+```
+
+#### Fuzzy Gaussian Naive Bayes com parâmetros Fuzzy
+
+```{r}
+# --------------------------------------------------
+# Fuzzy Gaussian Naive Bayes com parâmetros Fuzzy
+
 
 fit_FGNB <- GauNBFuzzyParam(train =  Train[,-4],
                                     cl = Train[,4], metd = 1, cores = 1)
@@ -96,7 +100,7 @@ print(fit_FGNB)
 saida <- predict(fit_FGNB, test)
 confusionMatrix(factor(Test[,4]), saida)
 
-saida <- predict(fit_FGNB, test, type = "matrix")
+#saida <- predict(fit_FGNB, test, type = "matrix")
 
 # -----
 fit_GNB <- FuzzyGaussianNaiveBayes(train =  Train[,-4],

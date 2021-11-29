@@ -65,7 +65,7 @@ FuzzyExponentialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) 
 
   # --------------------------------------------------------
   # Estimating class parameters
-  train <- data.frame(train)
+  train <- as.data.frame(train)
   cols <- ncol(train) # Number of variables
   if(is.null(cols)){
     cols <- 1
@@ -301,7 +301,8 @@ predict.FuzzyExponentialNaiveBayes <- function(object,
     # -------------------------
     Infpos <- which(R_M_obs==Inf)
     R_M_obs[Infpos] <- .Machine$integer.max;
-    R_M_obs <- R_M_obs/rowSums(R_M_obs)
+    R_M_obs <- matrix(unlist(R_M_obs),ncol = cols)
+    R_M_obs <- R_M_obs/rowSums(R_M_obs,na.rm = T)
     # ----------
     colnames(R_M_obs) <- unique(M)
     return(R_M_obs)
