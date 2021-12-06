@@ -19,33 +19,29 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 
-Última Atualização: `r format(Sys.Date(),"%d-%m-%Y")`
+Last update: `r format(Sys.Date(),"%d-%m-%Y")`
 
-#### Família de Classificadores utilizando probabilidades Fuzzy e Não Fuzzy
-
-<!--
-## Resumo:
+## A family of probabilities-based classifiers Fuzzy and Non-Fuzzy
 
 
-Um dos classificadores, foi uma nova abordagem do algoritmo **Naive Bayes** que junto com meu orientador [**Ronei Moraes**](mailto:ronei@de.ufpb.br) propusemos no meu TCC de graduação em Estatística defendido no fim de 2014 na UFPB ([link para a documento do TCC intitulado como *'Sistema de avaliação de treinamento baseado em realidade virtual usando rede de probabilidade fuzzy fundamentada na distribuição Normal Fuzzy.'*](http://www.de.ufpb.br/graduacao/tcc/TCC2014p2Jodavid.pdf)), e publicado em periódico esse ano (2021) com o título [*'A New Bayesian Network Based on Gaussian Naive Bayes with Fuzzy Parameters for Training Assessment in Virtual Simulators'*](https://link.springer.com/article/10.1007/s40815-020-00936-4) (publicado na [International Journal of Fuzzy Systems](https://www.springer.com/journal/40815)).
--->
-
-
-## Instalação do pacote:
+### Installation
 
 ```{r, echo=TRUE, eval=FALSE}
-# Instalando
+# Installation
 install.packages("devtools")
 devtools::install_github("Jodavid/FuzzyClass")
+```
 
-# Chamando o pacote
+
+### Usage
+
+```{r}
+# package import
 library(FuzzyClass)
 ```
 
 
-## Utilização:
-
-### Exemplo 1:
+### Data reading and preparation for use
 
 ```{r}
 
@@ -53,11 +49,11 @@ library(FuzzyClass)
 library(caret)
 
 #' ---------------------------------------------
-#' Abaixo seguem como são utilizadas as funções:
+#' The following shows how the functions are used:
 #' --------------
-#' Lendo uma base de dados:
+#' Reading a database:
 #'
-#' Dados de treinamento real:
+#' Actual training data:
 data(VirtualRealityData)
 
 VirtualRealityData <- as.data.frame(VirtualRealityData)
@@ -72,11 +68,11 @@ test = Test[,-4]
 
 ```
 
-#### Fuzzy Gaussian Naive Bayes com parâmetros Fuzzy
+#### Fuzzy Gaussian Naive Bayes with Fuzzy Parameters
 
 ```{r}
 # --------------------------------------------------
-# Fuzzy Gaussian Naive Bayes com parâmetros Fuzzy
+# Fuzzy Gaussian Naive Bayes with Fuzzy Parameters
 
 
 fit_FGNB <- GauNBFuzzyParam(train =  Train[,-4],
@@ -90,7 +86,7 @@ confusionMatrix(factor(Test[,4]), saida)
 saida <- predict(fit_FGNB, test, type = "matrix")
 ```
 
-#### Fuzzy Gaussian Naive Bayes baseado em Zadeh
+#### Fuzzy Gaussian Naive Bayes based in Zadeh
 
 ```{r}
 fit_FGNB <- FuzzyGaussianNaiveBayes(train =  Train[,-4],
@@ -99,8 +95,6 @@ fit_FGNB <- FuzzyGaussianNaiveBayes(train =  Train[,-4],
 print(fit_FGNB)
 saida <- predict(fit_FGNB, test)
 confusionMatrix(factor(Test[,4]), saida)
-
-#saida <- predict(fit_FGNB, test, type = "matrix")
 
 # -----
 fit_GNB <- FuzzyGaussianNaiveBayes(train =  Train[,-4],

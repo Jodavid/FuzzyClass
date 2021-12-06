@@ -4,7 +4,7 @@
 \name{FuzzyClass-package}
 \alias{FuzzyClass}
 \alias{FuzzyClass-package}
-\title{FuzzyClass: Fuzzy e Non-Fuzzy Classifiers}
+\title{FuzzyClass: Fuzzy and Non-Fuzzy Classifiers}
 \description{
 \if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
 

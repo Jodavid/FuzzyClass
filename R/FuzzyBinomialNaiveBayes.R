@@ -92,6 +92,7 @@ FuzzyBinomialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
       p <- mean(SubSet)/n
       # --
       param <- c(n = round(n), p =p)
+      if(param[1]==0){param[1] <- 1}
       # --
       return(param)
     })
@@ -222,7 +223,8 @@ predict.FuzzyBinomialNaiveBayes <- function(object,
   # --------------
   P <- lapply(1:length(unique(M)), function(i) {
     densidades <- sapply(1:cols, function(j) {
-      stats::dbinom(test[, j], size = parametersC[[i]][[j]][1], prob = parametersC[[i]][[j]][2])
+      t <- round(test[, j]) # Necessario para Binomial
+      stats::dbinom(t, size = parametersC[[i]][[j]][1], prob = parametersC[[i]][[j]][2])
     })
     densidades <- apply(densidades, 1, prod)
     # Calcula a P(w_i) * P(X_k | w_i)
