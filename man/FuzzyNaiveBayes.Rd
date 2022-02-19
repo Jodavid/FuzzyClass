@@ -4,14 +4,12 @@
 \alias{FuzzyNaiveBayes}
 \title{Fuzzy Naive Bayes}
 \usage{
-FuzzyNaiveBayes(train, cl, cores = 2, fuzzy = T, m = NULL, Pi = NULL)
+FuzzyNaiveBayes(train, cl, fuzzy = T, m = NULL, Pi = NULL)
 }
 \arguments{
 \item{train}{matrix or data frame of training set cases.}
 
 \item{cl}{factor of true classifications of training set}
-
-\item{cores}{how many cores of the computer do you want to use (default = 2)}
 
 \item{fuzzy}{boolean variable to use the membership function}
 
@@ -28,25 +26,25 @@ A vector of classifications
 \examples{
 
 set.seed(1) # determining a seed
-data(iris)
+data(HouseVotes84, package = "mlbench")
 
 # Splitting into Training and Testing
-split <- caTools::sample.split(t(iris[, 1]), SplitRatio = 0.7)
-Train <- subset(iris, split == "TRUE")
-Test <- subset(iris, split == "FALSE")
+split <- caTools::sample.split(t(HouseVotes84[, 1]), SplitRatio = 0.7)
+Train <- subset(HouseVotes84, split == "TRUE")
+Test <- subset(HouseVotes84, split == "FALSE")
 # ----------------
 # matrix or data frame of test set cases.
 # A vector will be interpreted as a row vector for a single case.
-test <- Test[, -5]
+test <- Test[, -1]
 fit_FNB <- FuzzyNaiveBayes(
-  train = Train[, -5],
-  cl = Train[, 5], cores = 2
+  train = Train[, -1],
+  cl = Train[, 1]
 )
 
 pred_FNB <- predict(fit_FNB, test)
 
 head(pred_FNB)
-head(Test[, 5])
+head(Test[, 1])
 
 }
 \references{
