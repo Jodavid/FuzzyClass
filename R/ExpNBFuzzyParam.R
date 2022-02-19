@@ -1,7 +1,3 @@
-# -----------------------------------------------
-#      Fuzzy Exponential Naive Bayes Classifier
-# -----------------------------------------------
-
 #' Fuzzy Exponential Naive Bayes Classifier with Fuzzy parameters
 #'
 #' \code{ExpNBFuzzyParam} Fuzzy Exponential Naive Bayes Classifier with Fuzzy parameters
@@ -63,6 +59,7 @@ ExpNBFuzzyParam.default <- function(train, cl, metd = 1, cores = 2) {
   }
   dados <- train # training data matrix
   M <- c(unlist(cl)) # true classes
+  M <- factor(M, labels = unique(M))
   # --------------------------------------------------------
   # Finding lambdas for each class
   lambdas <- lapply(1:length(unique(M)), function(i) colMeans(subset(dados, M == i)))

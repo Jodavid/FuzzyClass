@@ -1,22 +1,3 @@
-# --------------------------------------------------
-#             Fuzzy Binomial Naive Bayes
-#
-# data: 01.11.2021
-# version: 0.1
-# author: ..., Ronei Moraes
-# adaptado por: Jodavid Ferreira;
-# e-mails: ...,jodavid@protonmail.com; ronei@de.ufpb.br
-#
-# --------------------------------------------------
-# Necessary packages
-# -------------------
-# parallel: to makeCluster function
-# doSNOW: to registerDoSnow function
-# foreach: to `%dopar%` function
-# MASS: to fitdistr
-# -------------------
-
-
 #' \code{FuzzyBinomialNaiveBayes} Fuzzy Binomial Naive Bayes
 #'
 #'
@@ -39,7 +20,7 @@
 #' split <- caTools::sample.split(t(iris[, 1]), SplitRatio = 0.7)
 #' Train <- subset(iris, split == "TRUE")
 #' Test <- subset(iris, split == "FALSE")
-#' # ----------------
+#' #----------------
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
 #' test <- Test[, -5]
@@ -59,18 +40,17 @@ FuzzyBinomialNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
   UseMethod("FuzzyBinomialNaiveBayes")
 }
 
-# -------------------------------
 #' @noRd
 funcao_estimation_N <- function(n, x){
   var(x)  - (mean(x)*(n-mean(x)))/n
 }
-# -------------------------------
+#-------------------------------
 
 
 #' @export
 FuzzyBinomialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
 
-  # --------------------------------------------------------
+  #--------------------------------------------------------
   # Estimating class parameters
   train <- as.data.frame(train)
   cols <- ncol(train) # Number of variables
@@ -79,16 +59,21 @@ FuzzyBinomialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
   }
   dados <- train # training data matrix
   M <- c(unlist(cl)) # true classes
-  # --------------------------------------------------------
+  M <- factor(M, labels = unique(M))
+  #--------------------------------------------------------
 
-  # --------------------------------------------------------
+  #--------------------------------------------------------
   # Estimating Gamma Parameters
   parametersC <- lapply(1:length(unique(M)), function(i) {
     lapply(1:cols, function(j) {
-      # print(c(i,j))
+       #print(c(i,j))
       SubSet <- dados[M == unique(M)[i], j]
       # --
-      n <- uniroot(funcao_estimation_N, interval = c(0,100), x = SubSet)$root
+      n <- try(uniroot(funcao_estimation_N, interval = c(1,100), x = SubSet)$root, silent = TRUE)
+      if(inherits(n, "try-error")){
+        n <- summary(funcao_estimation_N(1:100, x = SubSet))[3]
+        n <- ifelse(round(n)< mean(SubSet), mean(SubSet)+1, round(n))
+      }
       p <- mean(SubSet)/n
       # --
       param <- c(n = round(n), p =p)
@@ -97,72 +82,20 @@ FuzzyBinomialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
       return(param)
     })
   })
-  # --------------------------------------------------------
-
-  # --------------------------------------------------------
-  # Sturges
-  Sturges <- lapply(1:length(unique(M)), function(i) {
-    SubSet <- dados[M == unique(M)[i], ]
-    return(round(sqrt(nrow(SubSet))))
-  })
-
-  # --------------------------------------------------------
-  # Comprimento do Intervalo
-  Comprim_Intervalo <- lapply(1:length(unique(M)), function(i) {
-    SubSet <- dados[M == unique(M)[i], ]
-    # (Min - Max) / Sturges -- Por variável
-    comp <- (apply(SubSet, 2, max) - apply(SubSet, 2, min)) / Sturges[[i]]
-  })
-  # --------------------------------------------------------
-
-  # --------------------------------------------------------
-  Freq <- lapply(1:length(unique(M)), function(i) {
-    ara <- array(0, dim = c(Sturges[[i]], cols))
-    return(ara)
-  })
-  # ---------------
-  minimos <- lapply(1:length(unique(M)), function(i) {
-    sapply(1:cols, function(j) {
-      SubSet <- dados[M == unique(M)[i], ]
-      return(min(SubSet[, j]))
-    })
-  })
-  # ---------------
-  for (classe in 1:length(unique(M))) {
-    # --
-    SubSet <- dados[M == unique(M)[classe], ]
-    # --
-    for (coluna in 1:cols) { # coluna da classe
-      for (linhaClasse in 1:nrow(SubSet)) { # linha da classe
-        faixa <- minimos[[classe]][coluna] + Comprim_Intervalo[[classe]][coluna] # faixa de frequencia inicial
-        for (linhaFreq in 1:Sturges[[classe]]) { # linha da Freq
-          if (SubSet[linhaClasse, coluna] < faixa) { # ve se valor da classe pertence aaquela faixa
-            Freq[[classe]][linhaFreq, coluna] <- Freq[[classe]][linhaFreq, coluna] + 1 # acumula valor na faixa de frequencia e interrompe este ultimo for
-            break
-          }
-          if (linhaFreq == Sturges[[classe]] && SubSet[linhaClasse, coluna] >= faixa) {
-            Freq[[classe]][linhaFreq, coluna] <- Freq[[classe]][linhaFreq, coluna] + 1
-            break
-          }
-          faixa <- faixa + Comprim_Intervalo[[classe]][coluna] # troca de faixa -> proxima
-        }
-      }
-    }
-  }
-  # --------------------------------------------------------
-
-  # --------------------------------------------------------
-  # Cria a funcao de pertinencia para cada classe, a partir das frequencias relativas
-  Pertinencia <- lapply(1:length(unique(M)), function(i) {
-    Freq[[i]] / nrow(dados[M == unique(M)[i], ])
-  })
-  # ------
+  #--------------------------------------------------------
+  #--------------------------------------------------------
+  Sturges <- Sturges(dados, M);
+  Comprim_Intervalo <- Comprim_Intervalo(dados, M, Sturges);
+  minimos <- minimos(dados, M, cols);
+  Freq <- Freq(dados, M, Comprim_Intervalo, Sturges, minimos, cols);
+  Pertinencia <- Pertinencia(Freq, dados, M);
+  #------
   # Probabilidade a priori das classes - consideradas iguais
   pk <- rep(1 / length(unique(M)), length(unique(M)))
-  # -------------------------------------------------------
+  #-------------------------------------------------------
 
 
-  # -------------------------------------------------------
+  #-------------------------------------------------------
   structure(list(
     parametersC = parametersC,
     minimos = minimos,
@@ -178,23 +111,23 @@ FuzzyBinomialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
   class = "FuzzyBinomialNaiveBayes"
   )
 }
-# -------------------------
+#-------------------------
 
 
 #' @export
 print.FuzzyBinomialNaiveBayes <- function(x, ...) {
   if (x$fuzzy == T) {
-    # -----------------
+    #-----------------
     cat("\nFuzzy Binomial Naive Bayes Classifier for Discrete Predictors\n\n")
-    # -----------------
+    #-----------------
   } else {
-    # -----------------
+    #-----------------
     cat("\nNaive Binomial  Bayes Classifier for Discrete Predictors\n\n")
-    # -----------------
+    #-----------------
   }
   cat("Class:\n")
   print(levels(x$M))
-  # -----------------
+  #-----------------
 }
 
 #' @export
@@ -202,10 +135,10 @@ predict.FuzzyBinomialNaiveBayes <- function(object,
                                          newdata,
                                          type = "class",
                                          ...) {
-  # --------------------------------------------------------
+  #--------------------------------------------------------
   # type <- match.arg("class")
   test <- as.data.frame(newdata)
-  # --------------------------------------------------------
+  #--------------------------------------------------------
   parametersC <- object$parametersC
   minimos <- object$minimos
   cols <- object$cols
@@ -216,11 +149,11 @@ predict.FuzzyBinomialNaiveBayes <- function(object,
   Sturges <- object$Sturges
   pk <- object$pk
   fuzzy <- object$fuzzy
-  # --------------------------------------------------------
+  #--------------------------------------------------------
 
-  # --------------------------------------------------------
+  #--------------------------------------------------------
   # Classification
-  # --------------
+  #--------------
   P <- lapply(1:length(unique(M)), function(i) {
     densidades <- sapply(1:cols, function(j) {
       t <- round(test[, j]) # Necessario para Binomial
@@ -234,79 +167,56 @@ predict.FuzzyBinomialNaiveBayes <- function(object,
   })
 
   N_test <- nrow(test)
-  # --------------
+  #--------------
   # Defining how many CPU cores to use
   core <- parallel::makePSOCKcluster(cores)
   doParallel::registerDoParallel(core)
-  # --------------
+  #--------------
   # loop start
   R_M_obs <- foreach::foreach(h = 1:N_test, .combine = rbind) %dopar% {
 
-    # ------------
+    #------------
     x <- test[h, ]
-    # ------------
-    ACHOU_t <- c()
-    ACHOU <- 0
+    #------------
 
     if (fuzzy == T) {
-      # ---------------
-      for (classe in 1:length(unique(M))) {
-        # --
-        # --
-        for (coluna in 1:cols) { # coluna da classe
-          for (linhaF in 1:Sturges[[classe]]) { # linha da classe
-            faixa <- minimos[[classe]][coluna] + Comprim_Intervalo[[classe]][coluna] # faixa de frequencia inicial
-            if (x[coluna] < faixa) { # ve se valor da classe pertence aaquela faixa
-              ACHOU[coluna] <- Pertinencia[[classe]][linhaF, coluna] # acumula valor na faixa de frequencia e interrompe este ultimo for
-              break
-            }
-            if (linhaF == Sturges[[classe]]) {
-              ACHOU[coluna] <- Pertinencia[[classe]][linhaF, coluna]
-              break
-            }
-            faixa <- faixa + Comprim_Intervalo[[classe]][coluna] # troca de faixa -> proxima
-          }
-        }
-        # ---
-        ACHOU_t <- rbind(ACHOU_t, ACHOU) # Classes são as linhas
-        # ---
-      }
-      # -----
-      row.names(ACHOU_t) <- unique(M)
-      # --------------------------------------------------------
-      ACHOU_t <- apply(ACHOU_t, 1, prod)
+
+      ACHOU_t <- pertinencia_predict(M, Sturges, minimos, Comprim_Intervalo, Pertinencia, cols,  x);
 
       f <- sapply(1:length(unique(M)), function(i) {
         P[[i]][h] * ACHOU_t[i]
       })
+
     } else {
+
       f <- sapply(1:length(unique(M)), function(i) {
-        P[[i]][h] #* ACHOU_t[i]
+        P[[i]][h]
       })
+
     }
-    # -------------------------------------------------------
+    #-------------------------------------------------------
 
     return(f)
   }
-  # ------------
-  # -------------------------
+  #------------
+  #-------------------------
   parallel::stopCluster(core)
-  # ---------
+  #---------
   if (type == "class") {
-    # -------------------------
+    #-------------------------
     R_M_obs <- sapply(1:nrow(R_M_obs), function(i) which.max(R_M_obs[i, ]))
     resultado <- unique(M)[R_M_obs]
     return(as.factor(c(resultado)))
-    # -------------------------
+    #-------------------------
   } else {
-    # -------------------------
+    #-------------------------
     Infpos <- which(R_M_obs==Inf)
     R_M_obs[Infpos] <- .Machine$integer.max;
     R_M_obs <- matrix(unlist(R_M_obs),ncol = cols)
     R_M_obs <- R_M_obs/rowSums(R_M_obs,na.rm = T)
-    # ----------
+    #----------
     colnames(R_M_obs) <- unique(M)
     return(R_M_obs)
-    # -------------------------
+    #-------------------------
   }
 }

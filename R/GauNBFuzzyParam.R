@@ -1,23 +1,3 @@
-# --------------------------------------------------
-#             Fuzzy Gaussian Naive Bayes
-#
-# data: 18.09.2021
-# version: 0.1
-# author: Jodavid Ferreira; Ronei Moraes
-# e-mails: jodavid@protonmail.com; ronei@de.ufpb.br
-#
-# --------------------------------------------------
-# Necessary packages
-# -------------------
-# parallel: to makeCluster function
-# doSNOW: to registerDoSnow function
-# foreach: to `%dopar%` function
-# -------------------
-
-# -----------------------------------------------
-#      Fuzzy Gaussian Naive Bayes Classifier
-# -----------------------------------------------
-
 #' Fuzzy Gaussian Naive Bayes Classifier with Fuzzy parameters
 #'
 #' \code{GauNBFuzzyParam} Fuzzy Gaussian Naive Bayes Classifier with Fuzzy parameters
@@ -76,6 +56,7 @@ GauNBFuzzyParam.default <- function(train, cl, metd = 1, cores = 2) {
   }
   dados <- train # training data matrix
   M <- c(unlist(cl)) # true classes
+  M <- factor(M, labels = unique(M))
   # --------------------------------------------------------
   # Finding Mu and Sigma for each class
   medias <- lapply(1:length(unique(M)), function(i) colMeans(subset(dados, M == unique(M)[i])))

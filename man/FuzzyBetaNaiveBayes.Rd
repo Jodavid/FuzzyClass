@@ -30,7 +30,7 @@ data(iris)
 split <- caTools::sample.split(t(iris[, 1]), SplitRatio = 0.7)
 Train <- subset(iris, split == "TRUE")
 Test <- subset(iris, split == "FALSE")
-# ----------------
+#----------------
 # matrix or data frame of test set cases.
 # A vector will be interpreted as a row vector for a single case.
 test <- Test[, -5]

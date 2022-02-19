@@ -1,24 +1,3 @@
-# --------------------------------------------------
-#             Fuzzy Naive Bayes Triangular
-#
-# data: 10.10.2021
-# version: 0.1
-# author: ..., Ronei Moraes
-# adaptado por: Jodavid Ferreira;
-# e-mails: ...,jodavid@protonmail.com; ronei@de.ufpb.br
-#
-# --------------------------------------------------
-# Necessary packages
-# -------------------
-# parallel: to makeCluster function
-# doSNOW: to registerDoSnow function
-# foreach: to `%dopar%` function
-# -------------------
-
-# -----------------------------------------------
-#      Fuzzy Naive Bayes Triangular Classifier
-# -----------------------------------------------
-
 #' \code{FuzzyTriangularNaiveBayes} Naive Bayes Trianglar Classifier
 #'
 #'
@@ -71,6 +50,7 @@ FuzzyTriangularNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
   }
   dados <- train # training data matrix
   M <- c(unlist(cl)) # true classes
+  M <- factor(M, labels = unique(M))
   # intervalos = 10 # Division to memberships
   # --------------------------------------------------------
   # # --------------------------------------------------------
@@ -90,80 +70,11 @@ FuzzyTriangularNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
     getParametersTriangular(SubSet)
   })
   # --------------------------------------------------------
-
-  # --------------------------------------------------------
-  # Admitindo que a distribuicao estatistica do vetor de dados, dadas as classes sejam
-  # Triangulares T(a,b,m) e usando a mesma estrutura do Classificador Bayesiano.
-  # Assim, temos que:
-  #
-  # p(wi\Xk) = (2*(Xk-a)/((b-a)(m-a))), se a <= Xk <= m
-  #          = (2*(b-Xk)/((b-a)(b-m))), se m <= Xk <= b
-  #
-  #---
-  # Geracao das funcoes de pertinencias por histograma de frequencias:
-  # - Calcular os valores maximo e minimo de cada dimensao
-  # - Aplicar a forma de Sturges para gerar os intervalos
-  #   Sturges = arredonda(raiz(N))
-  # - Encontrar as frequencias para cada combinacao dos dados
-  # - Armazenar essas frequencias em uma matriz multimensional
-  #
-  # --------------------------------------------------------
-  # Sturges
-  Sturges <- lapply(1:length(unique(M)), function(i) {
-    SubSet <- dados[M == unique(M)[i], ]
-    return(round(sqrt(nrow(SubSet))))
-  })
-
-  # --------------------------------------------------------
-  # Comprimento do Intervalo
-  Comprim_Intervalo <- lapply(1:length(unique(M)), function(i) {
-    SubSet <- dados[M == unique(M)[i], ]
-    # (Min - Max) / Sturges -- Por variável
-    comp <- (apply(SubSet, 2, max) - apply(SubSet, 2, min)) / Sturges[[i]]
-  })
-  # --------------------------------------------------------
-
-  # --------------------------------------------------------
-  Freq <- lapply(1:length(unique(M)), function(i) {
-    ara <- array(0, dim = c(Sturges[[i]], cols))
-    return(ara)
-  })
-  # ---------------
-  minimos <- lapply(1:length(unique(M)), function(i) {
-    sapply(1:cols, function(j) {
-      SubSet <- dados[M == unique(M)[i], ]
-      return(min(SubSet[, j]))
-    })
-  })
-  # ---------------
-  for (classe in 1:length(unique(M))) {
-    # --
-    SubSet <- dados[M == unique(M)[classe], ]
-    # --
-    for (coluna in 1:cols) { # coluna da classe
-      for (linhaClasse in 1:nrow(SubSet)) { # linha da classe
-        faixa <- minimos[[classe]][coluna] + Comprim_Intervalo[[classe]][coluna] # faixa de frequencia inicial
-        for (linhaFreq in 1:Sturges[[classe]]) { # linha da Freq
-          if (SubSet[linhaClasse, coluna] < faixa) { # ve se valor da classe pertence aaquela faixa
-            Freq[[classe]][linhaFreq, coluna] <- Freq[[classe]][linhaFreq, coluna] + 1 # acumula valor na faixa de frequencia e interrompe este ultimo for
-            break
-          }
-          if (linhaFreq == Sturges[[classe]] && SubSet[linhaClasse, coluna] >= faixa) {
-            Freq[[classe]][linhaFreq, coluna] <- Freq[[classe]][linhaFreq, coluna] + 1
-            break
-          }
-          faixa <- faixa + Comprim_Intervalo[[classe]][coluna] # troca de faixa -> proxima
-        }
-      }
-    }
-  }
-  # --------------------------------------------------------
-
-  # --------------------------------------------------------
-  # Cria a funcao de pertinencia para cada classe, a partir das frequencias relativas
-  Pertinencia <- lapply(1:length(unique(M)), function(i) {
-    Freq[[i]] / nrow(dados[M == unique(M)[i], ])
-  })
+  Sturges <- Sturges(dados, M);
+  Comprim_Intervalo <- Comprim_Intervalo(dados, M, Sturges);
+  minimos <- minimos(dados, M, cols);
+  Freq <- Freq(dados, M, Comprim_Intervalo, Sturges, minimos, cols);
+  Pertinencia <- Pertinencia(Freq, dados, M);
   # ------
   # Probabilidade a priori das classes - consideradas iguais
   pk <- rep(1 / length(unique(M)), length(unique(M)))

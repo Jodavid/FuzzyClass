@@ -86,6 +86,8 @@ confusionMatrix(factor(Test[,4]), saida)
 saida <- predict(fit_FGNB, test, type = "matrix")
 ```
 
+<!--
+
 #### Fuzzy Gaussian Naive Bayes based in Zadeh
 
 ```{r}
@@ -217,3 +219,4 @@ saida <- predict(fit_NBT, test, type = "matrix")
 head(saida)
 
 ```
+-->

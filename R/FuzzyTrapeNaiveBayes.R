@@ -1,24 +1,3 @@
-# --------------------------------------------------
-#             Fuzzy Naive Bayes Trapeizodal
-#
-# data: 18.09.2021
-# version: 0.1
-# author: Arthur..., Ronei Moraes
-# adaptado por: Jodavid Ferreira;
-# e-mails: ...,jodavid@protonmail.com; ronei@de.ufpb.br
-#
-# --------------------------------------------------
-# Necessary packages
-# -------------------
-# parallel: to makeCluster function
-# doSNOW: to registerDoSnow function
-# foreach: to `%dopar%` function
-# -------------------
-
-# -----------------------------------------------
-#      Fuzzy Naive Bayes Trapeizodal Classifier
-# -----------------------------------------------
-
 #' \code{FuzzyTrapezoidalNaiveBayes} Naive Bayes Trapeizodal Classifier
 #'
 #'
@@ -71,6 +50,7 @@ FuzzyTrapezoidalNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) 
   }
   dados <- train # training data matrix
   M <- c(unlist(cl)) # true classes
+  M <- factor(M, labels = unique(M))
   intervalos <- 10 # Division to memberships
   # --------------------------------------------------------
   # --------------------------------------------------------
@@ -149,8 +129,6 @@ predict.FuzzyTrapezoidalNaiveBayes <- function(object,
   N_test <- nrow(test)
   # --------------
   # Defining how many CPU cores to use
-  # core <- parallel::makeCluster(cores)
-  # doSNOW::registerDoSNOW(core)
   core <- parallel::makePSOCKcluster(cores)
   doParallel::registerDoParallel(core)
   # --------------

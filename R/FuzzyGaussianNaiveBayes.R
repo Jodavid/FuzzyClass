@@ -1,24 +1,3 @@
-# --------------------------------------------------
-#             Fuzzy Gaussian Naive Bayes
-#                       Zadeh
-#
-# data: 18.09.2021
-# version: 0.1
-# author: Jodavid Ferreira; Ronei Moraes
-# e-mails: jodavid@protonmail.com; ronei@de.ufpb.br
-#
-# --------------------------------------------------
-# Necessary packages
-# -------------------
-# parallel: to makeCluster function
-# doSNOW: to registerDoSnow function
-# foreach: to `%dopar%` function
-# -------------------
-
-# -----------------------------------------------
-#      Gaussian Naive Bayes Classifier
-# -----------------------------------------------
-
 #' Gaussian Naive Bayes Classifier
 #'
 #' \code{FuzzyGaussianNaiveBayes} Gaussian Naive Bayes Classifier Zadeh-based
@@ -77,27 +56,14 @@ FuzzyGaussianNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = TRUE) 
   }
   dados <- train # training data matrix
   M <- c(unlist(cl)) # true classes
+  M <- factor(M, labels = unique(M))
   # -------------------------------
   N <- nrow(dados) # Number of observations
   # -------------------------------
   # --------------------------------------------------------
-  # RETIRADO DO CODIGO DO MATLAB
-  # -----------------------------
-  # % Admitindo que a distribuicao estatistica do vetor de dados, dadas as classes sejam normais,
-  # % pode-se usar a mesma estrutura de maxima verossimilhanca do Classificador Bayesiano.
-  # % Assim, temos que:
-  #   % ln p(k\X) = ln (mu_k(X)) + ln (p_k(X)) - 0.5*ln(det(covariancia_k)) - 0.5*(X-media(X))*inversa_covar_k*(X(1:d,j)-media(1:d,1))
-  # %
-  # % Geracao das funcoes de pertinencias por histograma de frequencias:
-  #   % - Calcular os valores maximo e minimo de cada dimensao
-  # % - Aplicar a forma de Sturges para gerar os intervalos
-  # %   Sturges = 1+ 3.3*log10(N)
-  # % - Encontrar as frequencias para cada combinacao dos dados
-  # % - Armazenar essas frequencias em uma matriz multimensional
-  # -----------------------------
   class <- length(unique(M))
   names_class <- unique(M)
-  sizes <- table(factor(M)) # sapply(1:class, function(x) sum(M==x)) # Quantas observações em cada classe
+  sizes <- table(factor(M))
   Sturges <- round(1 + 3.3 * log10(sizes)) # Sturges
   # -----------------------------
   # Minimo de cada classe para cada variável

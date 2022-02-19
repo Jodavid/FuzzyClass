@@ -1,17 +1,19 @@
-#' Fuzzy Poisson Naive Bayes
+#' Fuzzy Naive Bayes
 #'
-#' \code{FuzzyPoissonNaiveBayes} Fuzzy Poisson Naive Bayes
+#' \code{FuzzyNaiveBayes} Fuzzy Naive Bayes
 #'
 #'
 #' @param train matrix or data frame of training set cases.
 #' @param cl factor of true classifications of training set
 #' @param cores  how many cores of the computer do you want to use (default = 2)
 #' @param fuzzy boolean variable to use the membership function
+#' @param m is M/N, where M is the number of classes and N is the number of train lines
+#' @param Pi is 1/M, where M is the number of classes
 #'
 #' @return A vector of classifications
 #'
 #' @references
-#' \insertRef{moraes2015fuzzy}{FuzzyClass}
+#' \insertRef{moraes2009another}{FuzzyClass}
 #'
 #' @examples
 #'
@@ -26,24 +28,25 @@
 #' # matrix or data frame of test set cases.
 #' # A vector will be interpreted as a row vector for a single case.
 #' test <- Test[, -5]
-#' fit_NBT <- FuzzyPoissonNaiveBayes(
+#' fit_FNB <- FuzzyNaiveBayes(
 #'   train = Train[, -5],
 #'   cl = Train[, 5], cores = 2
 #' )
 #'
-#' pred_NBT <- predict(fit_NBT, test)
+#' pred_FNB <- predict(fit_FNB, test)
 #'
-#' head(pred_NBT)
+#' head(pred_FNB)
 #' head(Test[, 5])
-#' @importFrom stats dpois
+#'
+#' @importFrom stats model.extract na.pass sd terms predict
 #'
 #' @export
-FuzzyPoissonNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
-  UseMethod("FuzzyPoissonNaiveBayes")
+FuzzyNaiveBayes <- function(train, cl, cores = 2, fuzzy = T, m = NULL, Pi = NULL) {
+  UseMethod("FuzzyNaiveBayes")
 }
 
 #' @export
-FuzzyPoissonNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
+FuzzyNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T, m = NULL, Pi = NULL) {
 
   # --------------------------------------------------------
   # Estimating class parameters
@@ -55,23 +58,31 @@ FuzzyPoissonNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
   dados <- train # training data matrix
   M <- c(unlist(cl)) # true classes
   M <- factor(M, labels = unique(M))
+
+  N <- nrow(dados)
   # --------------------------------------------------------
 
   # --------------------------------------------------------
-  # Estimating Parameters
-  parametersC <- lapply(1:length(unique(M)), function(i) {
-    lapply(1:cols, function(j) {
-      SubSet <- dados[M == unique(M)[i], j]
-      param <- mean(SubSet, na.rm = TRUE)
-      return(param)
-    })
-  })
+  # Estimating Gamma Parameters
+  if(is.null(m) & is.null(Pi)){ m <- length(unique(cl))/nrow(dados); Pi <-  1/m}
+  # ---
+  # Lista: variavel x classes
+  model <- e1071::naiveBayes(x = dados, y = cl)
+  parametersC <- model$tables
   # --------------------------------------------------------
+
+  #--------------------------------------------------------
   Sturges <- Sturges(dados, M);
   Comprim_Intervalo <- Comprim_Intervalo(dados, M, Sturges);
   minimos <- minimos(dados, M, cols);
   Freq <- Freq(dados, M, Comprim_Intervalo, Sturges, minimos, cols);
   Pertinencia <- Pertinencia(Freq, dados, M);
+  #------
+  # --------------------------------------------------------
+  # Cria a funcao de pertinencia para cada classe, a partir das frequencias relativas
+  Pertinencia <- lapply(1:length(unique(M)), function(i) {
+    Freq[[i]] / nrow(dados[M == unique(M)[i], ])
+  })
   # ------
   # Probabilidade a priori das classes - consideradas iguais
   pk <- rep(1 / length(unique(M)), length(unique(M)))
@@ -89,23 +100,24 @@ FuzzyPoissonNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
     Pertinencia = Pertinencia,
     Sturges = Sturges,
     pk = pk,
-    fuzzy = fuzzy
+    fuzzy = fuzzy,
+    model = model
   ),
-  class = "FuzzyPoissonNaiveBayes"
+  class = "FuzzyNaiveBayes"
   )
 }
 # -------------------------
 
 
 #' @export
-print.FuzzyPoissonNaiveBayes <- function(x, ...) {
+print.FuzzyNaiveBayes <- function(x, ...) {
   if (x$fuzzy == T) {
     # -----------------
-    cat("\nFuzzy Poisson Naive Bayes Classifier for Discrete Predictors\n\n")
+    cat("\nFuzzy Naive Bayes Classifier for Discrete Predictors\n\n")
     # -----------------
   } else {
     # -----------------
-    cat("\nNaive Poisson  Bayes Classifier for Discrete Predictors\n\n")
+    cat("\nNaive Bayes Classifier for Discrete Predictors\n\n")
     # -----------------
   }
   cat("Class:\n")
@@ -114,10 +126,10 @@ print.FuzzyPoissonNaiveBayes <- function(x, ...) {
 }
 
 #' @export
-predict.FuzzyPoissonNaiveBayes <- function(object,
-                                               newdata,
-                                               type = "class",
-                                               ...) {
+predict.FuzzyNaiveBayes <- function(object,
+                                   newdata,
+                                   type = "class",
+                                   ...) {
   # --------------------------------------------------------
   test <- as.data.frame(newdata)
   # --------------------------------------------------------
@@ -131,21 +143,34 @@ predict.FuzzyPoissonNaiveBayes <- function(object,
   Sturges <- object$Sturges
   pk <- object$pk
   fuzzy <- object$fuzzy
+  model = object$model
   # --------------------------------------------------------
 
   # --------------------------------------------------------
   # Classification
   # --------------
+  if ((fuzzy == F) & (type == "class")) {
+    class(model) <- "naiveBayes"
+    R_M_obs <- predict(model, test)
+  } else {
+    if ((fuzzy == F)) {
+      class(model) <- "naiveBayes"
+      R_M_obs <- predict(model, test, type = "raw")
+    }
+  }
+
+
+  if (fuzzy == T) {
   P <- lapply(1:length(unique(M)), function(i) {
-    densidades <- sapply(1:cols, function(j) {
-      stats::dpois(round(test[, j]), lambda = parametersC[[i]][[j]][1])
-    })
-    densidades <- apply(densidades, 1, prod)
-    # Calcula a P(w_i) * P(X_k | w_i)
-    p <- pk[[i]] * densidades
-    # ---
-    return(p)
-  })
+        densidades <- sapply(1:cols, function(j) {
+          parametersC[[j]][i,2]*test[,j]
+        })
+        densidades <- apply(densidades, 1, prod)
+        p <- pk[[i]] * densidades
+
+        # ---
+        return(p)
+      })
 
   N_test <- nrow(test)
   # --------------
@@ -159,23 +184,40 @@ predict.FuzzyPoissonNaiveBayes <- function(object,
     # ------------
     x <- test[h, ]
     # ------------
+    ACHOU_t <- c()
+    ACHOU <- 0
 
-    if (fuzzy == T) {
-
-      ACHOU_t <- pertinencia_predict(M, Sturges, minimos, Comprim_Intervalo, Pertinencia, cols,  x);
-
-      f <- sapply(1:length(unique(M)), function(i) {
-        P[[i]][h] * ACHOU_t[i]
-      })
-
-    } else {
-
-      f <- sapply(1:length(unique(M)), function(i) {
-        P[[i]][h]
-      })
-
+    # ---------------
+    for (classe in 1:length(unique(M))) {
+      # --
+      # --
+      for (coluna in 1:cols) { # coluna da classe
+        for (linhaF in 1:Sturges[[classe]]) { # linha da classe
+          faixa <- minimos[[classe]][coluna] + Comprim_Intervalo[[classe]][coluna] # faixa de frequencia inicial
+          if (x[coluna] < faixa) { # ve se valor da classe pertence aaquela faixa
+            ACHOU[coluna] <- Pertinencia[[classe]][linhaF, coluna] # acumula valor na faixa de frequencia e interrompe este ultimo for
+            break
+          }
+          if (linhaF == Sturges[[classe]]) {
+            ACHOU[coluna] <- Pertinencia[[classe]][linhaF, coluna]
+            break
+          }
+          faixa <- faixa + Comprim_Intervalo[[classe]][coluna] # troca de faixa -> proxima
+        }
+      }
+      # ---
+      ACHOU_t <- rbind(ACHOU_t, ACHOU) # Classes são as linhas
+      # ---
     }
-    # -------------------------------------------------------
+    # -----
+    row.names(ACHOU_t) <- unique(M)
+    # --------------------------------------------------------
+    ACHOU_t <- apply(ACHOU_t, 1, prod)
+
+    f <- sapply(1:length(unique(M)), function(i) {
+      P[[i]][h] * ACHOU_t[i]
+    })
+  # -------------------------------------------------------
 
     return(f)
   }
@@ -200,4 +242,9 @@ predict.FuzzyPoissonNaiveBayes <- function(object,
     return(R_M_obs)
     # -------------------------
   }
+  }
+
+  return(R_M_obs)
+
+
 }
