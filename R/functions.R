@@ -58,6 +58,7 @@ Freq <- function(dados, M, Comprim_Intervalo, Sturges, minimos, cols) {
       for (linhaClasse in 1:nrow(SubSet)) { # linha da classe
         faixa <- minimos[[classe]][coluna] + Comprim_Intervalo[[classe]][coluna] # faixa de frequencia inicial
         for (linhaFreq in 1:Sturges[[classe]]) { # linha da Freq
+          # --
           if (SubSet[linhaClasse, coluna] < faixa) { # ve se valor da classe pertence aaquela faixa
             Freq[[classe]][linhaFreq, coluna] <- Freq[[classe]][linhaFreq, coluna] + 1 # acumula valor na faixa de frequencia e interrompe este ultimo for
             break
@@ -66,6 +67,39 @@ Freq <- function(dados, M, Comprim_Intervalo, Sturges, minimos, cols) {
             Freq[[classe]][linhaFreq, coluna] <- Freq[[classe]][linhaFreq, coluna] + 1
             break
           }
+          faixa <- faixa + Comprim_Intervalo[[classe]][coluna] # troca de faixa -> proxima
+        }
+      }
+    }
+  }
+  #----------
+  return(Freq)
+  #----------
+}
+
+
+
+#' @noRd
+Intervalos_Valores <- function(dados, M, Comprim_Intervalo, Sturges, minimos, cols) {
+
+  #--------------------------------------------------------
+  Freq <- lapply(1:length(unique(M)), function(i) {
+    ara <- array(0, dim = c(Sturges[[i]], cols))
+    return(ara)
+  })
+  for (classe in 1:length(unique(M))) {
+    # --
+    SubSet <- dados[M == unique(M)[classe], ]
+    # --
+    for (coluna in 1:cols) { # coluna da classe
+      for (linhaClasse in 1:nrow(SubSet)) { # linha da classe
+        faixaant <- minimos[[classe]][coluna]
+        faixa <- minimos[[classe]][coluna] + Comprim_Intervalo[[classe]][coluna] # faixa de frequencia inicial
+        for (linhaFreq in 1:Sturges[[classe]]) { # linha da Freq
+         # --
+           Freq[[classe]][linhaFreq, coluna] <- paste0(round(faixaant,3),",",round(faixa,3));
+           # --
+          faixaant <- faixa
           faixa <- faixa + Comprim_Intervalo[[classe]][coluna] # troca de faixa -> proxima
         }
       }
