@@ -252,12 +252,14 @@ FuzzyNaiveBayes.continuo <- function(train, cl, fuzzy = T, m = NULL, Pi = NULL) 
   Comprim_Intervalo <- Comprim_Intervalo(dados, M, Sturges);
   minimos <- minimos(dados, M, cols);
   Freq <- Freq(dados, M, Comprim_Intervalo, Sturges, minimos, cols);
+  Freq
   Intervalos_Valores <- Intervalos_Valores(dados, M, Comprim_Intervalo, Sturges, minimos, cols);
   #------
   parametersC <- c()
   for(i in 1:length(unique(M))){
-    parametersC[[i]] <- apply(Freq[[i]], 2, \(x) x/max(x))
+    parametersC[[i]] <- apply(Freq[[i]], 2, \(x) ( (x + m*Pi) / ( sum(x) +m ) ) )
   }
+
   #------
   Pertinencia <- Pertinencia(Freq, dados, M);
   #------
