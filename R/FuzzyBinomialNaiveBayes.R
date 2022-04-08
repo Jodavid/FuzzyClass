@@ -61,6 +61,26 @@ FuzzyBinomialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
   M <- c(unlist(cl)) # true classes
   M <- factor(M, labels = unique(M))
   #--------------------------------------------------------
+  # --------------------------------------------------------
+  # Verify data types
+  verifyNumbers <- sapply(1:cols, function(i){
+    set.seed(3)
+    n = 3
+    subset <- sample(dados[,i],size = n, replace = F)
+    result <- subset == floor(subset)
+    if(sum(result) == n){
+      result <- 1
+    }else{
+      result <- 0
+    }
+    return(result)
+  })
+
+  # --------------------------------------------------------
+  if(sum(verifyNumbers) != cols){ stop("All variables must be discrete values.") }
+  # --------------------------------------------------------
+
+
 
   #--------------------------------------------------------
   # Estimating Gamma Parameters

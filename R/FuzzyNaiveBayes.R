@@ -168,11 +168,13 @@ FuzzyNaiveBayes.categorical <- function(train, cl, fuzzy = T, m = NULL, Pi = NUL
   dados <- train # training data matrix
   M <- c(unlist(cl)) # true classes
   if(!is.factor(M))  M <- factor(M, levels = unique(M))
-  # --
+
+  # --------------------------------------------------------
   res <- sapply(1:cols, function(i) {is.factor(train[,i])})
   if(sum(res) != cols){ stop("All variables must be categorical (factor).") }
-  # --
-  N <- nrow(dados)
+  # --------------------------------------------------------
+
+    N <- nrow(dados)
   # --------------------------------------------------------
 
   # --------------------------------------------------------
