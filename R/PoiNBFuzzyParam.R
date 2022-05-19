@@ -11,7 +11,7 @@
 #' @return A vector of classifications
 #'
 #' @references
-#' \insertRef{moraes2021new}{FuzzyClass}
+#' \insertRef{soares2016assessment}{FuzzyClass}
 #'
 #' @examples
 #'

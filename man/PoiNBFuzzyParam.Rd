@@ -54,5 +54,5 @@ head(pred_FPoiNB)
 head(Test[, 4])
 }
 \references{
-\insertRef{moraes2021new}{FuzzyClass}
+\insertRef{soares2016assessment}{FuzzyClass}
 }
