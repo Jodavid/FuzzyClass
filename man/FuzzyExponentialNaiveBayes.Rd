@@ -4,7 +4,7 @@
 \alias{FuzzyExponentialNaiveBayes}
 \title{Fuzzy Exponential Naive Bayes}
 \usage{
-FuzzyExponentialNaiveBayes(train, cl, cores = 2, fuzzy = T)
+FuzzyExponentialNaiveBayes(train, cl, cores = 2, fuzzy = TRUE)
 }
 \arguments{
 \item{train}{matrix or data frame of training set cases.}

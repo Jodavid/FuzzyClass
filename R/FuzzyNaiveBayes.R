@@ -40,7 +40,7 @@
 #' @importFrom stats model.extract na.pass sd terms predict
 #'
 #' @export
-FuzzyNaiveBayes <- function(train, cl, fuzzy = T, m = NULL, Pi = NULL) {
+FuzzyNaiveBayes <- function(train, cl, fuzzy = TRUE, m = NULL, Pi = NULL) {
   UseMethod("FuzzyNaiveBayes")
 }
 

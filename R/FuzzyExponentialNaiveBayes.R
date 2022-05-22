@@ -38,7 +38,7 @@
 #' @importFrom stats dexp
 #'
 #' @export
-FuzzyExponentialNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
+FuzzyExponentialNaiveBayes <- function(train, cl, cores = 2, fuzzy = TRUE) {
   UseMethod("FuzzyExponentialNaiveBayes")
 }
 

@@ -45,7 +45,7 @@
 #' @importFrom stats dbinom uniroot
 #'
 #' @export
-FuzzyBinomialNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
+FuzzyBinomialNaiveBayes <- function(train, cl, cores = 2, fuzzy = TRUE) {
   UseMethod("FuzzyBinomialNaiveBayes")
 }
 
@@ -73,7 +73,6 @@ FuzzyBinomialNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
   # --------------------------------------------------------
   # Verify data types
   verifyNumbers <- sapply(1:cols, function(i){
-    set.seed(3)
     n = 3
     subset <- sample(dados[,i],size = n, replace = F)
     result <- subset == floor(subset)

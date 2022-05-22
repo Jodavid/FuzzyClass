@@ -40,7 +40,7 @@
 #' @importFrom Rdpack reprompt
 #'
 #' @export
-FuzzyGaussianNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
+FuzzyGaussianNaiveBayes <- function(train, cl, cores = 2, fuzzy = TRUE) {
   UseMethod("FuzzyGaussianNaiveBayes")
 }
 

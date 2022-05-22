@@ -70,7 +70,6 @@ PoiNBFuzzyParam.default <- function(train, cl, metd = 1, cores = 2) {
   # --------------------------------------------------------
   # Verify data types
   verifyNumbers <- sapply(1:cols, function(i){
-    set.seed(3)
     n = 3
     subset <- sample(dados[,i],size = n, replace = F)
     result <- subset == floor(subset)

@@ -4,7 +4,7 @@
 \alias{FuzzyTriangularNaiveBayes}
 \title{\code{FuzzyTriangularNaiveBayes} Naive Bayes Trianglar Classifier}
 \usage{
-FuzzyTriangularNaiveBayes(train, cl, cores = 2, fuzzy = T)
+FuzzyTriangularNaiveBayes(train, cl, cores = 2, fuzzy = TRUE)
 }
 \arguments{
 \item{train}{matrix or data frame of training set cases.}

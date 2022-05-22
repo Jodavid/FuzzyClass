@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
 
-Fuzzy Classifiers for data.
+FuzzyClass is a package which has several classifiers that can be used for discrete variables and for continuous variables based on the idea of Naive Bayes and Fuzzy Naive Bayes considering some statistical distributions of articles published in the literature developed in the LabTEVE and LEAPIG research laboratories.
 }
 \seealso{
 Useful links:
@@ -23,7 +23,8 @@ Useful links:
 
 Other contributors:
 \itemize{
-  \item Ronei Moraes \email{ronei@de.ufpb.br} [contributor]
+  \item Ronei Moraes \email{ronei@de.ufpb.br} (\href{https://orcid.org/0000-0001-8436-8950}{ORCID}) [contributor]
+  \item Arthur Ricardo \email{arthur.ricardo17@gmail.com} [contributor]
 }
 
 }

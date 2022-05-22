@@ -34,7 +34,7 @@
 #' head(pred_NBT)
 #' head(Test[, 5])
 #' @export
-FuzzyTriangularNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
+FuzzyTriangularNaiveBayes <- function(train, cl, cores = 2, fuzzy = TRUE) {
   UseMethod("FuzzyTriangularNaiveBayes")
 }
 

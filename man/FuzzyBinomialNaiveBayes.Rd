@@ -4,7 +4,7 @@
 \alias{FuzzyBinomialNaiveBayes}
 \title{\code{FuzzyBinomialNaiveBayes} Fuzzy Binomial Naive Bayes}
 \usage{
-FuzzyBinomialNaiveBayes(train, cl, cores = 2, fuzzy = T)
+FuzzyBinomialNaiveBayes(train, cl, cores = 2, fuzzy = TRUE)
 }
 \arguments{
 \item{train}{matrix or data frame of training set cases.}

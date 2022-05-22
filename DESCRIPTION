@@ -3,8 +3,9 @@ Title: Fuzzy and Non-Fuzzy Classifiers
 Version: 0.1.0
 Authors@R:
     c(person("Jodavid", "Ferreira", email = "jodavid@protonmail.com",role = c("aut","cre"), comment = c(ORCID = "0000-0002-2131-6464")),
-      person("Ronei", "Moraes", email = "ronei@de.ufpb.br",role = c("ctb")))
-Description: Fuzzy Classifiers for data.
+      person("Ronei", "Moraes", email = "ronei@de.ufpb.br",role = c("ctb"), comment = c(ORCID = "0000-0001-8436-8950")),
+      person("Arthur", "Ricardo", email = "arthur.ricardo17@gmail.com",role = c("ctb")))
+Description: FuzzyClass is a package which has several classifiers that can be used for discrete variables and for continuous variables based on the idea of Naive Bayes and Fuzzy Naive Bayes considering some statistical distributions of articles published in the literature developed in the LabTEVE and LEAPIG research laboratories.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

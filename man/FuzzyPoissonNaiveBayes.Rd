@@ -4,7 +4,7 @@
 \alias{FuzzyPoissonNaiveBayes}
 \title{Fuzzy Poisson Naive Bayes}
 \usage{
-FuzzyPoissonNaiveBayes(train, cl, cores = 2, fuzzy = T)
+FuzzyPoissonNaiveBayes(train, cl, cores = 2, fuzzy = TRUE)
 }
 \arguments{
 \item{train}{matrix or data frame of training set cases.}

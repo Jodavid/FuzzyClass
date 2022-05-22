@@ -4,7 +4,7 @@
 \alias{FuzzyGammaNaiveBayes}
 \title{\code{FuzzyGammaNaiveBayes} Fuzzy Gamma Naive Bayes}
 \usage{
-FuzzyGammaNaiveBayes(train, cl, cores = 2, fuzzy = T)
+FuzzyGammaNaiveBayes(train, cl, cores = 2, fuzzy = TRUE)
 }
 \arguments{
 \item{train}{matrix or data frame of training set cases.}

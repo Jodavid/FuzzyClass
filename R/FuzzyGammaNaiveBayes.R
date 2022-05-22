@@ -36,7 +36,7 @@
 #' @importFrom stats dgamma
 #'
 #' @export
-FuzzyGammaNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
+FuzzyGammaNaiveBayes <- function(train, cl, cores = 2, fuzzy = TRUE) {
   UseMethod("FuzzyGammaNaiveBayes")
 }
 

@@ -4,7 +4,7 @@
 \alias{FuzzyGaussianNaiveBayes}
 \title{Gaussian Naive Bayes Classifier}
 \usage{
-FuzzyGaussianNaiveBayes(train, cl, cores = 2, fuzzy = T)
+FuzzyGaussianNaiveBayes(train, cl, cores = 2, fuzzy = TRUE)
 }
 \arguments{
 \item{train}{matrix or data frame of training set cases.}

@@ -36,12 +36,12 @@
 #' @importFrom stats dbeta
 #'
 #' @export
-FuzzyBetaNaiveBayes <- function(train, cl, cores = 2, fuzzy = T) {
+FuzzyBetaNaiveBayes <- function(train, cl, cores = 2, fuzzy = TRUE) {
   UseMethod("FuzzyBetaNaiveBayes")
 }
 
 #' @export
-FuzzyBetaNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = T) {
+FuzzyBetaNaiveBayes.default <- function(train, cl, cores = 2, fuzzy = TRUE) {
 
   #--------------------------------------------------------
   # Estimating class parameters
