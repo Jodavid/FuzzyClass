@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
 
-FuzzyClass is a package which has several classifiers that can be used for discrete variables and for continuous variables based on the idea of Naive Bayes and Fuzzy Naive Bayes considering some statistical distributions of articles published in the literature developed in the LabTEVE and LEAPIG research laboratories.
+Provides classifiers that can be used for discrete variables and for continuous variables based on the idea of Naive Bayes and Fuzzy Naive Bayes considering some statistical distributions of articles published in the literature developed in the LabTEVE and LEAPIG research laboratories. Among the proposed classification methods is a with the Gamma distribution, proposed by Moraes, Soares and Machado (2018) <doi:10.1142/9789813273238_0088>.
 }
 \seealso{
 Useful links:
