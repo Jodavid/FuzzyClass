@@ -259,7 +259,7 @@ FuzzyNaiveBayes.continuo <- function(train, cl, fuzzy = T, m = NULL, Pi = NULL) 
   #------
   parametersC <- c()
   for(i in 1:length(unique(M))){
-    parametersC[[i]] <- apply(Freq[[i]], 2, \(x) ( (x + m*Pi) / ( sum(x) +m ) ) )
+    parametersC[[i]] <- apply(Freq[[i]], 2, function(x) ( (x + m*Pi) / ( sum(x) +m ) ) )
   }
 
   #------
